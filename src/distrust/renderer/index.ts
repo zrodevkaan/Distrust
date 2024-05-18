@@ -3,7 +3,7 @@
 
 export function startAll()
 {
-    plugins.forEach(plugin => plugin.start())
+    plugins.forEach(plugins => plugins.start());
 }
 
 export function stopAll()

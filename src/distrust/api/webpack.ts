@@ -49,7 +49,7 @@ class Webpack {
         const propsArray = Array.isArray(props) ? props : [props];
 
         const condition = (module: WebpackModule) =>
-            module.exports instanceof Object && propsArray.every(prop => prop in module.exports);
+            module.exports instanceof Object && propsArray.every(prop => prop in module || prop in module.exports);
 
         return this.getModule(condition, options);
     }
