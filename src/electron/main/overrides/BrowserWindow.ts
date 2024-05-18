@@ -1,11 +1,11 @@
 ﻿import * as electron from "electron";
-import {BrowserWindow} from "electron";
-import {join} from "path";
+import { BrowserWindow, type BrowserWindowConstructorOptions } from "electron";
+import { join } from "path";
 
 const { env } = process;
 
 export default class PatchedBrowserWindow extends BrowserWindow {
-    constructor(opts: Electron.BrowserWindowConstructorOptions) {
+    constructor(opts: BrowserWindowConstructorOptions) {
         env.DISCORD_PRELOADER = opts.webPreferences!.preload;
 
         opts.webPreferences!.preload = join(__dirname, "preload.min.js");
@@ -29,8 +29,10 @@ export default class PatchedBrowserWindow extends BrowserWindow {
 
 const electronModule = require.resolve("electron");
 delete require.cache[electronModule]!.exports;
-const electronMod: any = {
+
+const electronMod: typeof Electron.CrossProcessExports = {
     ...electron,
     BrowserWindow: PatchedBrowserWindow
 };
+
 require.cache[electronModule]!.exports = electronMod;
