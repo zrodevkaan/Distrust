@@ -1,6 +1,6 @@
 ﻿import * as electron from "electron";
-import {BrowserWindow} from "electron";
-import {join} from "path";
+import { BrowserWindow } from "electron";
+import { join } from "path";
 
 const { env } = process;
 
@@ -29,8 +29,10 @@ export default class PatchedBrowserWindow extends BrowserWindow {
 
 const electronModule = require.resolve("electron");
 delete require.cache[electronModule]!.exports;
-const electronMod: any = {
+
+const electronMod: typeof Electron.CrossProcessExports = {
     ...electron,
     BrowserWindow: PatchedBrowserWindow
 };
+
 require.cache[electronModule]!.exports = electronMod;
