@@ -20,29 +20,6 @@ const injector = new Patcher('recovery')
 const parser = proxyCache(() => Webpack.getModule(x=>x?.exports?.default?.parse))
 const ModalsModule = proxyCache(() => Webpack.getKeys(['ConfirmModal']))
 
-injectCSS('recovery', 
-`[class*=errorPage] [class*=buttons_] {
-  flex-direction: column;
-  align-items: center;
-}
-[class*=errorPage] [class*=buttons_] [class*=button__] {
-  width: 400px;
-  margin: 5px;
-}
-.distrust-recovery-button {
-  width: var(--custom-button-button-lg-width);
-  height: var(--custom-button-button-lg-height);
-  min-width: var(--custom-button-button-lg-width);
-  min-height: var(--custom-button-button-lg-height);
-  background-color: var(--button-danger-background) !important;
-}
-[class*=errorPage] [class*=scrollbarGhostHairline] {
-  white-space: break-spaces;
-  width: 80vw;
-  text-align: center;
-}
-`)
-
 interface ErrorComponentState {
     error: {
         message: string;
@@ -106,6 +83,28 @@ interface TreeNode {
     children: React.ReactElement[];
 }
 export async function start(): Promise<void> {
+    injectCSS('recovery',
+      `[class*=errorPage] [class*=buttons_] {
+      flex-direction: column;
+      align-items: center;
+    }
+    [class*=errorPage] [class*=buttons_] [class*=button__] {
+      width: 400px;
+      margin: 5px;
+    }
+    .distrust-recovery-button {
+      width: var(--custom-button-button-lg-width);
+      height: var(--custom-button-button-lg-height);
+      min-width: var(--custom-button-button-lg-width);
+      min-height: var(--custom-button-button-lg-height);
+      background-color: var(--button-danger-background) !important;
+    }
+    [class*=errorPage] [class*=scrollbarGhostHairline] {
+      white-space: break-spaces;
+      width: 80vw;
+      text-align: center;
+    }
+    `)
     const ErrorScreen = await waitForModule(x=>x?.exports?.default?.toString?.()?.includes(".AnalyticEvents.APP_CRASHED"));
     //const ErrorScreen2 = await waitForModule((x=>x?.exports?.default?.toString?.()?.includes(".AnalyticEvents.APP_CRASHED")))
     console.log('ERRORSCREEN', ErrorScreen)
