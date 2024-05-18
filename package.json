@@ -7,9 +7,10 @@
     "name": "kaan"
   },
   "scripts": {
-    "buildElectron": "pnpm esbuild ./src/electron/main/index.ts --bundle --outfile=build/distrust.js --platform=node --external:electron",
-    "buildPreload": "pnpm esbuild ./src/electron/preload/index.ts --bundle --outfile=build/preload.min.js --platform=node --external:electron",
-    "buildDistrust": "pnpm esbuild ./src/distrust/index.ts --bundle --outfile=build/distrust.min.js --platform=node --external:electron"
+    "buildElectron": "node scripts/build.mjs --main",
+    "buildPreload": "node scripts/build.mjs --preload",
+    "buildDistrust": "node scripts/build.mjs --renderer",
+    "build": "node scripts/build.mjs --all"
   },
   "devDependencies": {
     "@types/electron": "^1.6.10",
