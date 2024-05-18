@@ -1,11 +1,11 @@
 ﻿import * as electron from "electron";
-import { BrowserWindow, type BrowserWindowConstructorOptions } from "electron";
+import { BrowserWindow } from "electron";
 import { join } from "path";
 
 const { env } = process;
 
 export default class PatchedBrowserWindow extends BrowserWindow {
-    constructor(opts: BrowserWindowConstructorOptions) {
+    constructor(opts: Electron.BrowserWindowConstructorOptions) {
         env.DISCORD_PRELOADER = opts.webPreferences!.preload;
 
         opts.webPreferences!.preload = join(__dirname, "preload.min.js");
