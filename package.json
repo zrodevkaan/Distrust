@@ -1,0 +1,29 @@
+{
+  "name": "Distrust",
+  "description": "It's something I wont tell you, distrust bro",
+  "homepage": "https://github.com/zrodevkaan/Distrust",
+  "version": "0.1.3",
+  "author": {
+    "name": "kaan"
+  },
+  "scripts": {
+    "buildElectron": "pnpm esbuild ./src/electron/main/index.ts --bundle --outfile=build/distrust.js --platform=node --external:electron",
+    "buildPreload": "pnpm esbuild ./src/electron/preload/index.ts --bundle --outfile=build/preload.min.js --platform=node --external:electron",
+    "buildDistrust": "pnpm esbuild ./src/distrust/index.ts --bundle --outfile=build/distrust.min.js --platform=node --external:electron"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.21",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "discord-types": "^1.3.3",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react": "latest"
+  },
+  "dependencies": {
+    "@electron/asar": "^3.2.9",
+    "esbuild": "^0.20.1",
+    "typescript": "^5.4.2"
+  }
+}
