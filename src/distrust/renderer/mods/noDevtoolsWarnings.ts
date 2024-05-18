@@ -12,7 +12,7 @@ export const {
 }
 
 export const start = (): void => {
-    logger.log('Starting NoDevToolsWarnings');
+    logger.info('Starting NoDevToolsWarnings');
 }
 
 export const patches = [
