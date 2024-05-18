@@ -1,4 +1,4 @@
-﻿import {sources, webpackRequire} from "./modules";
+﻿import {sources, waitForModule, webpackRequire} from "./modules";
 import {Flux} from "../modules/discordModules";
 import {Stores} from "discord-types";
 
@@ -17,6 +17,8 @@ class Webpack {
         if (!webpackRequire) throw new Error('Webpack not found. How did this even happen ??');
         return Object.values(webpackRequire.c) as WebpackModule[];
     }
+    
+    waitForModule = waitForModule;
 
     getLength(): number {
         if (!webpackRequire) throw new Error('Webpack not found');

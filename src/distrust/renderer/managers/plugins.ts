@@ -8,5 +8,5 @@ interface Mod {
 
 export function getExports(id: string)
 {
-    return plugins.find(plugin=>plugin.pluginName.toLowerCase() == id.toLowerCase())
+    return plugins.find(plugin=>plugin.manifest.name.toLowerCase() == id.toLowerCase())
 }

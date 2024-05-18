@@ -92,10 +92,9 @@ webpackChunk.push([
                 return true;
             }
         });
+        startAll();
     }
 ]);
-
-startAll();
 
 /*export let wreq: WebpackInstance;
 export let cache: WebpackInstance["c"];

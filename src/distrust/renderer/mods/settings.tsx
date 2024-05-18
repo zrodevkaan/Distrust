@@ -6,10 +6,14 @@ import {React} from "../../modules/discordModules";
 import {MOD_VERSION} from "../../../consts";
 
 const settingsLogger = new Logger('Settings')
-export const pluginName = 'Settings';
-export const pluginVersion = '1.0.0';
-export const pluginDescription = 'Settings plugin coremod';
-export const pluginAuthors = ['kaan'];
+
+export const manifest =
+    {
+        name: 'Settings',
+        version: '1.0.0',
+        description: 'settings plugin coremod ;3',
+        authors: ['kaan']
+    }
 
 export function start()
 {
