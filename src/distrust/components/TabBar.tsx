@@ -1,9 +1,9 @@
-﻿import React, { useState } from "react";
+﻿import { React } from "../modules/discordModules";
 import { Divider } from "./Components";
 
 export const TabBar = ({ tabs }) => {
-    const [activeTab, setActiveTab] = useState(tabs[0].id);
-    const [hoveredTab, setHoveredTab] = useState(null);
+    const [activeTab, setActiveTab] = React.useState(tabs[0].id);
+    const [hoveredTab, setHoveredTab] = React.useState(null);
 
     const handleTabClick = (tabId: any) => {
         setActiveTab(tabId);
@@ -18,8 +18,8 @@ export const TabBar = ({ tabs }) => {
     };
 
     return (
-        <div style={{ textAlign: "center" }}>
-            <div className="channelTabBar" style={{ position: "fixed", top: "97px" }}>
+        <div>
+            <div className="channelTabBar" style={{ textAlign: "center" }}>
                 {tabs.map(
                     (tab: {
                         id: React.Key;
@@ -61,7 +61,7 @@ export const TabBar = ({ tabs }) => {
                         </div>
                     ),
                 )}
-                <Divider style={{ width: "417px" }} />
+                <Divider />
             </div>
             <div>{tabs.map((tab) => activeTab === tab.id && tab.element())}</div>
         </div>

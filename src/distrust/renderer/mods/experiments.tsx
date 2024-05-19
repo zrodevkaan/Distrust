@@ -1,5 +1,12 @@
 ﻿import {coreLogger} from "../../devConsts";
 
+export const manifest =
+    {
+        name: 'Experiments',
+        version: '1.0.0',
+        description: 'Enables Developer Options/Experiments',
+        authors: ['Evie']
+    }
 
 export function start()
 {

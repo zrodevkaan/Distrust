@@ -20,6 +20,14 @@ const injector = new Patcher('recovery')
 const parser = proxyCache(() => Webpack.getModule(x=>x?.exports?.default?.parse))
 const ModalsModule = proxyCache(() => Webpack.getKeys(['ConfirmModal']))
 
+export const manifest =
+    {
+        name: 'Recovery',
+        version: '1.0.0',
+        description: 'Allows people to recover their discord if it crashes',
+        authors: ['kaan']
+    }
+
 interface ErrorComponentState {
     error: {
         message: string;
@@ -107,7 +115,6 @@ export async function start(): Promise<void> {
     `)
     const ErrorScreen = await waitForModule(x=>x?.exports?.default?.toString?.()?.includes(".AnalyticEvents.APP_CRASHED"));
     //const ErrorScreen2 = await waitForModule((x=>x?.exports?.default?.toString?.()?.includes(".AnalyticEvents.APP_CRASHED")))
-    console.log('ERRORSCREEN', ErrorScreen)
     void startErrors();
     injector.after(
         ErrorScreen.prototype,

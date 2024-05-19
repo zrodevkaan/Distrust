@@ -1,5 +1,5 @@
 ﻿import {WebpackInstance} from "discord-types/other";
-import Webpack from "./webpack";
+import Webpack, {GetModuleOptions, WebpackModule} from "./webpack";
 import {startAll} from "../renderer";
 import {plugins} from "../renderer/managers/plugins";
 import {coreLogger} from "../devConsts";
@@ -64,8 +64,8 @@ function patch(modules: Record<string, Function>, id: PropertyKey, module: Funct
     modules[id] = newModule;
 }
 
-export function waitForModule(filter: (module: WebpackInstance) => boolean) {
-    const cache = Webpack.getModule(filter);
+export function waitForModule(filter: (module: WebpackModule) => boolean, options: GetModuleOptions = {}) {
+    const cache = Webpack.getModule(filter, options);
 
     if (cache) { coreLogger.info('found', cache); return Promise.resolve(cache); }
     
