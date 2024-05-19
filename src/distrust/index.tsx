@@ -5,7 +5,7 @@ import { Patcher } from './api/patcher';
 import Webpack from "./api/webpack";
 import {Flux, React} from "./modules/discordModules";
 import {getExports, plugins} from "./renderer/managers/plugins";
-import {proxyCache} from "./api/helpers";
+import {proxyCache, sleep} from "./api/helpers";
 import {injectCSS, uninjectCSS} from "./api/css";
 // @ts-ignore
 window.distrust = new class Distrust {
