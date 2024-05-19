@@ -30,7 +30,7 @@ await Promise.all([
     entryPoints: ['src/distrust/index.tsx'],
     external: ['electron'],
     logLevel: 'info',
-    outfile: 'build/distrust.min.js',
+    outfile: 'build/renderer.min.js',
     platform: 'node',
   }),
 ])

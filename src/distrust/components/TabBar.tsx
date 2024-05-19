@@ -1,7 +1,7 @@
 ﻿import { React } from "../modules/discordModules";
 import { Divider } from "./Components";
 
-const TabBarComponent = ({ tabs }) => {
+export const TabBar = ({ tabs }) => {
     const [activeTab, setActiveTab] = React.useState(tabs[0].id);
     const [hoveredTab, setHoveredTab] = React.useState(null);
 
@@ -58,5 +58,3 @@ const TabBarComponent = ({ tabs }) => {
         </div>
     );
 };
-
-export const TabBar = React.memo(TabBarComponent);
