@@ -29,7 +29,7 @@ export class Patcher {
 
         if (!originalMethod || typeof originalMethod !== 'function') {
             this.log.error(`Method "${methodName}" not found on the target object.`);
-            return () => {};
+            return function() {};
         }
 
         this.addPatch(targetObject, methodName, originalMethod);
@@ -47,14 +47,14 @@ export class Patcher {
 
         if (!originalMethod || typeof originalMethod !== 'function') {
             this.log.error(`Method "${methodName}" not found on the target object.`);
-            return () => {};
+            return function() {};
         }
 
         this.addPatch(targetObject, methodName, originalMethod);
 
-        targetObject[methodName] = (...args: any[]) => {
-            const result = originalMethod.apply(this, args);
-            afterCallback.apply(this, args);
+        targetObject[methodName] = function() {
+            const result = originalMethod.apply(this, arguments);
+            afterCallback.call(this, this, result, arguments);
             return result;
         };
 
@@ -66,7 +66,7 @@ export class Patcher {
 
         if (!originalMethod || typeof originalMethod !== 'function') {
             this.log.error(`Method "${methodName}" not found on the target object.`);
-            return () => {};
+            return function() {};
         }
 
         this.addPatch(targetObject, methodName, originalMethod);

@@ -1,11 +1,8 @@
 ﻿import {WebpackInstance} from "discord-types/other";
-import Webpack from "./webpack";
+import Webpack, {GetModuleOptions, WebpackModule} from "./webpack";
 import {startAll} from "../renderer";
 import {plugins} from "../renderer/managers/plugins";
-import {patches} from "../renderer/mods/settings";
-import {CoreLogger} from "./logger";
 import {coreLogger} from "../devConsts";
-import * as repl from "node:repl";
 
 const WEBPACK_CHUNK = 'webpackChunkdiscord_app';
 export const sources: Record<number, string> = {};
@@ -23,16 +20,25 @@ function patch(modules: Record<string, Function>, id: PropertyKey, module: Funct
         if (plugin.patches) {
             const source = sources[id];
             plugin.patches.forEach(patch => {
-                if (source.includes(patch.find)) {
+                let hasMatch = false;
+
+                if (typeof patch.find === 'string') {
+                    hasMatch = source.includes(patch.find);
+                } else if (patch.find instanceof RegExp) {
+                    hasMatch = patch.find.test(source);
+                }
+
+                if (hasMatch) {
                     patch.replacements.forEach(replacement => {
                         sources[id] = sources[id].replace(replacement.match, replacement.replace);
-                        coreLogger.info(id, source.includes(patch.find), replacement, source[id]);
+                        coreLogger.info(id, replacement, sources[id]);
                     });
                     hasPatches = true;
                 }
             });
         }
     });
+
 
     function newModule(...args: any[]) {
         try {
@@ -58,17 +64,17 @@ function patch(modules: Record<string, Function>, id: PropertyKey, module: Funct
     modules[id] = newModule;
 }
 
-export function waitForModule(filter: (module: WebpackInstance) => boolean) {
-    const cache = Webpack.getModule(filter);
+export function waitForModule(filter: (module: WebpackModule) => boolean, options: GetModuleOptions = {}) {
+    const cache = Webpack.getModule(filter, options);
 
-    if (cache) return Promise.resolve(cache);
-
+    if (cache) { coreLogger.info('found', cache); return Promise.resolve(cache); }
+    
     return new Promise(resolve => {
-        function listener(module, exports) {
-            if (!filter(exports, module, module.id))
+        function listener(module) {
+            if (!filter(module)) return;
 
-                resolve(exports);
             listeners.delete(listener);
+            resolve(module?.exports?.default ?? cache?.exports?.default);
         }
         listeners.add(listener);
     });
@@ -89,6 +95,7 @@ webpackChunk.push([
         wpr.m = new Proxy(wpr.m, {
             set(target, key, value, r) {
                 patch(target, key, value);
+
                 return true;
             }
         });

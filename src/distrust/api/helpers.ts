@@ -1,4 +1,52 @@
-﻿export function sleep(ms: number): Promise<void> {
+﻿/**
+ * All credit goes to rauenzi for writing up this implementation.
+ * You can find the original source here:
+ * <https://github.com/rauenzi/BDPluginLibrary/blob/683d6abc70f149a39e2f0433ffb65e55ca47c4e3/release/0PluginLibrary.plugin.js#L2585C15-L2611>
+ *
+ * @remarks Used mainly in findInReactTree
+ */
+export function findInTree(
+    tree: React.ReactElement,
+    searchFilter: (arg0: any) => any,
+    args: { walkable?: string[]; ignore?: string[]; maxRecursion: number } = {maxRecursion: 100},
+): null | undefined {
+    const { walkable, ignore, maxRecursion } = args;
+
+    if (maxRecursion <= 0) return undefined;
+
+    if (searchFilter(tree)) {
+        return tree;
+    }
+
+    if (typeof tree !== "object" || tree == null) return undefined;
+
+    let tempReturn;
+    if (Array.isArray(tree)) {
+        for (const value of tree) {
+            tempReturn = findInTree(value, searchFilter, {
+                walkable,
+                ignore,
+                maxRecursion: maxRecursion - 1,
+            });
+            if (typeof tempReturn !== "undefined") return tempReturn;
+        }
+    } else {
+        const toWalk = walkable == null ? Object.keys(tree) : walkable;
+        for (const key of toWalk) {
+            if (!Object.prototype.hasOwnProperty.call(tree, key) || ignore?.includes(key)) continue;
+            tempReturn = findInTree(tree[key], searchFilter, {
+                walkable,
+                ignore,
+                maxRecursion: maxRecursion - 1,
+            });
+            if (typeof tempReturn !== "undefined") return tempReturn;
+        }
+    }
+    return tempReturn;
+}
+
+
+export function sleep(ms: number): Promise<void> {
     return new Promise(resolve => {
         setTimeout(resolve, ms);
     });

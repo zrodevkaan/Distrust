@@ -11,7 +11,7 @@ const build = {
 await Promise.all([
   (build.main || build.all) && esbuild.build({
     bundle: true,
-    entryPoints: ['src/electron/main/index.ts'],
+    entryPoints: ['src/electron/main/index.tsx'],
     external: ['electron'],
     logLevel: 'info',
     outfile: 'build/distrust.js',
@@ -19,7 +19,7 @@ await Promise.all([
   }),
   (build.preload || build.all) && esbuild.build({
     bundle: true,
-    entryPoints: ['src/electron/preload/index.ts'],
+    entryPoints: ['src/electron/preload/index.tsx'],
     external: ['electron'],
     logLevel: 'info',
     outfile: 'build/preload.min.js',
@@ -27,10 +27,10 @@ await Promise.all([
   }),
   (build.renderer || build.all) && esbuild.build({
     bundle: true,
-    entryPoints: ['src/distrust/index.ts'],
+    entryPoints: ['src/distrust/index.tsx'],
     external: ['electron'],
     logLevel: 'info',
-    outfile: 'build/distrust.min.js',
+    outfile: 'build/renderer.min.js',
     platform: 'node',
   }),
 ])

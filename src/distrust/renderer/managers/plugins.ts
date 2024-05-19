@@ -1,4 +1,4 @@
-﻿export const plugins = [ require('../mods/settings') ];
+﻿export const plugins = [ require('../mods/settings'), require('../mods/noDevtoolsWarnings'), require('../mods/recovery/index'), require('../mods/experiments')];
 
 interface Mod {
     start?: () => void;
