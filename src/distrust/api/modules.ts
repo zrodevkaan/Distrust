@@ -1,7 +1,5 @@
 ﻿import {WebpackInstance} from "discord-types/other";
 import Webpack, {GetModuleOptions, WebpackModule} from "./webpack";
-import {startAll} from "../renderer";
-import {plugins} from "../renderer/managers/plugins";
 import {coreLogger} from "../devConsts";
 
 const WEBPACK_CHUNK = 'webpackChunkdiscord_app';
@@ -16,7 +14,7 @@ function patch(modules: Record<string, Function>, id: PropertyKey, module: Funct
     sources[id] = module.toString();
     let hasPatches = false;
 
-    plugins.forEach(plugin => {
+    /*plugins.forEach(plugin => {
         if (plugin.patches) {
             const source = sources[id];
             plugin.patches.forEach(patch => {
@@ -37,9 +35,8 @@ function patch(modules: Record<string, Function>, id: PropertyKey, module: Funct
                 }
             });
         }
-    });
-
-
+    });*/
+    
     function newModule(...args: any[]) {
         try {
             let bestModule;
@@ -99,6 +96,5 @@ webpackChunk.push([
                 return true;
             }
         });
-        startAll();
     }
 ]);

@@ -1,5 +1,5 @@
 ﻿import {sources, waitForModule, webpackRequire} from "./modules";
-import {Flux} from "../modules/discordModules";
+// import {Flux} from "../modules/discordModules";
 import {Stores} from "discord-types";
 
 export interface GetModuleOptions {
@@ -37,10 +37,10 @@ class Webpack {
     }
 
 
-    getStore(condition: string, options: GetModuleOptions = {}): any {
+    /*getStore(condition: string, options: GetModuleOptions = {}): any {
         const stores = Flux.Store.getAll();
         return stores.find((store: Stores.FluxStore) => store.getName() === condition);
-    }
+    }*/
 
     getKeys(props: string | string[], options: GetModuleOptions = {}): any {
         const propsArray = Array.isArray(props) ? props : [props];

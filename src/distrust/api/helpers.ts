@@ -9,7 +9,7 @@ export function findInTree(
     tree: React.ReactElement,
     searchFilter: (arg0: any) => any,
     args: { walkable?: string[]; ignore?: string[]; maxRecursion: number } = {maxRecursion: 100},
-): null | undefined {
+): React.ReactElement | undefined {
     const { walkable, ignore, maxRecursion } = args;
 
     if (maxRecursion <= 0) return undefined;
