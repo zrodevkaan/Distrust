@@ -3,6 +3,7 @@ import { webpack, common } from "../../../api/webpack";
 import { Patcher } from "../../../api/patcher";
 import { findInTree, proxyCache } from "../../../api/helpers";
 import { injectCSS, uninjectCSS } from "../../../api/css";
+import {waitForModule} from "../../../api/webpack/getters";
 // import './styles.css' will implement later
 
 const Flux = common.modules.flux;
@@ -17,7 +18,6 @@ const ReactErrorListFallback =
 const logger = new Logger("recovery");
 let ReactErrors: Record<string, string> | undefined;
 const injector = new Patcher('recovery')
-let parser = webpack.getModule(x => x?.exports?.default?.parse)
 let ModalsModule = webpack.getKeys('ConfirmModal')
 
 export const manifest =
@@ -91,8 +91,9 @@ interface TreeNode {
     children: React.ReactElement[];
 }
 export async function start(): Promise<void> {
+    let parser = webpack.getModule(x => x?.exports?.default?.parse)
     injectCSS('recovery',
-      `[class*=errorPage] [class*=buttons_] {
+    `[class*=errorPage] [class*=buttons_] {
       flex-direction: column;
       align-items: center;
     }
@@ -111,57 +112,57 @@ export async function start(): Promise<void> {
       white-space: break-spaces;
       width: 80vw;
       text-align: center;
-    }
-    `)
-    const ErrorScreen = await webpack.waitForModule(x => x?.exports?.default?.toString?.()?.includes(".AnalyticEvents.APP_CRASHED")).then((module) => module?.default);
-    //const ErrorScreen2 = await waitForModule((x=>x?.exports?.default?.toString?.()?.includes(".AnalyticEvents.APP_CRASHED")))
+    }`
+    );
+
+    const ErrorScreen = await waitForModule((x: any) =>
+        x?.exports?.default?.toString()?.includes('.AnalyticEvents.APP_CRASHED')
+    ).then((module: any) => module?.default);
+
     void startErrors();
+
     injector.after(
         ErrorScreen.prototype,
-        "render",
-        (instance: ErrorScreenInstance, res: React.ReactElement, args): void => {
-            //if (generalSettings.get("automaticRecover")) {
-            //    startMainRecovery();
-            //    instance.setState({ error: null, info: null });
-            //}
+        'render',
+        (instance: ErrorScreenInstance, res: React.ReactElement) => {
             if (!instance.state?.error) return;
-            const {
-                props: { children },
-            }: { props: TreeNode } = findInTree(res, (x) => Boolean(x?.action))
-                ?.action as {
-                props: TreeNode;
-            };
-            if (!instance.state.error) return;
+
+            const treeNode = findInTree(res, (x: any) => Boolean(x?.action))?.action as { props: TreeNode };
+            if (!treeNode) return;
+
+            const { props: { children } } = treeNode;
             const stackError = instance.state.error.stack;
             const pluginId = stackError.match(PLUGIN_ID_FIND_REGEX);
-            /*if (pluginId) {
-                void disable(pluginId[1]);
-                toast.toast(
-                    Messages.REPLUGGED_TOAST_ADDON_DISABLE_SUCCESS.format({
-                        name: pluginId[1],
-                    }),
-                    toast.Kind.SUCCESS,
-                );
-            }*/
+            /*
+            if (pluginId) {
+              void disable(pluginId[1]);
+              toast.toast(
+                `Plugin ${pluginId[1]} has been disabled successfully.`,
+                toast.Kind.SUCCESS,
+              );
+            }
+            */
 
             const invar = stackError.match(FIND_ERROR_NUMBER);
+            const errorDetails = invar ? ReactErrors?.[invar[1]] : '';
 
             children.push(
                 <>
                     <ModalsModule.Button
-                        className={`replugged-recovery-button`}
+                        className="replugged-recovery-button"
                         onClick={() => {
                             startMainRecovery();
                             instance.setState({ error: null, info: null });
-                        }}>
+                        }}
+                    >
                         Recover Discord
                     </ModalsModule.Button>
-                    <div className={"recovery-parse"}>
-                        {parser.parse(`\`\`\`${invar ? ReactErrors?.[invar[1]] : ""}\n\n${stackError}\`\`\``)}
+                    <div className="recovery-parse">
+                        {parser.parse(`\`\`\`${errorDetails}\n\n${stackError}\`\`\``)}
                     </div>
-                </>,
+                </>
             );
-        },
+        }
     );
 }
 

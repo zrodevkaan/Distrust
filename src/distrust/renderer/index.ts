@@ -2,10 +2,10 @@
 
 export function startAll()
 {
-    plugins.forEach(plugins => plugins.start());
+    plugins.forEach(plugins => plugins?.start?.());
 }
 
 export function stopAll()
 {
-    plugins.forEach(plugin => plugin.start())
+    plugins.forEach(plugin => plugin.stop())
 }

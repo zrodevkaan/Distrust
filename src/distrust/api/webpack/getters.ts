@@ -35,8 +35,7 @@ export const filters =
             if (typeof match === 'string')
                 return source.includes(match)
 
-            if (match instanceof RegExp)
-                return Boolean(source.match(match))
+            return Boolean(source.match(match))
         }
 
         return false;
@@ -45,7 +44,6 @@ export const filters =
     byStoreName: (name: string) => (module: WebpackModule): boolean => module?.exports?.default?.getName?.() === name,
 }
 
-/** does not automatically  */
 export const getModule = <T = any>(filter: (module: WebpackModule) => boolean, options?: GetModuleOptions): T | undefined | null =>
 {
     if (wpReady)

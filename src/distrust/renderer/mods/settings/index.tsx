@@ -83,7 +83,6 @@ export async function start() {
     h3, p {color: var(--header-primary); margin: 0;}`)
     const settingsPage = await webpack.waitForModule(x=>x?.exports?.default?.prototype?.renderSidebar).then((module) => module?.default)
     injector.after(settingsPage?.prototype,'getPredicateSections', (args,b,c) => {
-        console.log(args, b,c)
         b.unshift({section: "client-mod-page", label: 'uwu', element: () => <div> <TabBar tabs={tabs}/> </div>, icon: () => DistrustIcon})
     })
     settingsLogger.info("Starting setting plugin")

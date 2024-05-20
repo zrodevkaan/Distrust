@@ -82,8 +82,9 @@ const patchPlaintext = (modules: WebpackChunk[1], id: string | number, module: W
 
                 if (typeof patch.find === 'string')
                     matched = source.includes(patch.find)
-                else if (patch.find instanceof RegExp)
+                else {
                     matched = Boolean(source.match(patch.find));
+                }
 
                 if (matched)
                 {
