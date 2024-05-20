@@ -10,7 +10,7 @@ export const modules = {
         DividerClasses: null as any,
         TextClasses: null as any,
     },
-    toast: null as (message: string, kind?: number, options?: Record<string, unknown>) => void,
+    toast: null as unknown as (message: string, kind?: number, options?: Record<string, unknown>) => void,
 }
 
 let _ready: () => void;
