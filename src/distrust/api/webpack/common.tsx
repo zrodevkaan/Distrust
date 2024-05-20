@@ -1,4 +1,5 @@
-import { filters, waitForModule } from "./getters";
+import {filters, getModule, waitForModule} from "./getters";
+import {WebpackModule} from "./modules";
 
 export const modules = {
     flux: null as any,
@@ -8,7 +9,8 @@ export const modules = {
         Divider: null as any,
         DividerClasses: null as any,
         TextClasses: null as any,
-    },
+    }, toast: undefined
+
 }
 
 let _ready: () => void;
@@ -24,18 +26,30 @@ export const waitForReady = new Promise((r) =>
     }
 })
 
-void Promise.allSettled([
-    waitForModule((module) => module?.exports?.default?.Store).then((module) => modules.flux = module),
-    waitForModule(filters.byProps('createElement')).then((module) => modules.react = module),
-    waitForModule(filters.byProps('sectionDivider')).then((module) =>
-    {
-        modules.components.DividerClasses = module;
-        modules.components.Divider = function Divider({ style }: { style?: React.CSSProperties }): React.ReactElement
-        {
-            return <div className={module.sectionDivider} style={style} />;
-        }
+function toast(message: string, kind?: number, options = {}) {
+    const toast = getModule(filters.byProps('createToast')).createToast;
+    const showToast = getModule(filters.byProps('showToast')).showToast;
+    showToast(toast(message, kind));
+}
+
+Promise.allSettled([
+    new Promise<void>((resolve) => {
+        modules.toast = toast;
+        resolve();
     }),
-    waitForModule(filters.byProps('text-xs/normal')).then((module) =>
-        modules.components.TextClasses = module
-    )
-]).then(() => _ready())
+    waitForModule((module) => module?.exports?.default?.Store).then((module) => {
+        modules.flux = module;
+    }),
+    waitForModule(filters.byProps('createElement')).then((module) => {
+        modules.react = module;
+    }),
+    waitForModule(filters.byProps('sectionDivider')).then((module) => {
+        modules.components.DividerClasses = module;
+        modules.components.Divider = function Divider({ style }) {
+            return <div className={module.sectionDivider} style={style} />;
+        };
+    }),
+    waitForModule(filters.byProps('text-xs/normal')).then((module) => {
+        modules.components.TextClasses = module;
+    })
+]).then(() => _ready());

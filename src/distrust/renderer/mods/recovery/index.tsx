@@ -91,7 +91,7 @@ interface TreeNode {
     children: React.ReactElement[];
 }
 export async function start(): Promise<void> {
-    let parser = webpack.getModule(x => x?.exports?.default?.parse)
+    let parser = webpack.getModule(x => x?.exports?.default?.parse)?.default
     injectCSS('recovery',
     `[class*=errorPage] [class*=buttons_] {
       flex-direction: column;

@@ -5,27 +5,28 @@ const {
     components: { Divider },
 } = common.modules;
 
-export const TabBar = ({ tabs }) =>
-{
+const TabBarCom = ({ tabs }) => {
     const [activeTab, setActiveTab] = React.useState(tabs[0].id);
     const [hoveredTab, setHoveredTab] = React.useState(null);
 
-    const handleTabClick = (tabId) => {
+    const handleTabClick = React.useCallback((tabId) => {
         setActiveTab(tabId);
-    };
+    }, []);
 
-    const handleMouseEnter = (tabId) => {
+    const handleMouseEnter = React.useCallback((tabId) => {
         setHoveredTab(tabId);
-    };
+    }, []);
 
-    const handleMouseLeave = () => {
+    const handleMouseLeave = React.useCallback(() => {
         setHoveredTab(null);
-    };
+    }, []);
+
+    const memoizedTabs = React.useMemo(() => tabs, [tabs]);
 
     return (
         <div>
             <div className="channelTabBar" style={{ textAlign: "center" }}>
-                {tabs.map((tab) => (
+                {memoizedTabs.map((tab) => (
                     <div key={tab.id} style={{ display: "inline-block" }}>
                         <button
                             className={`channelTabBarItem${activeTab === tab.id ? " selected" : ""}`}
@@ -58,8 +59,12 @@ export const TabBar = ({ tabs }) =>
                 <Divider />
             </div>
             <div>
-                {tabs.map((tab) => activeTab === tab.id && tab.element())}
+                {memoizedTabs.map((tab) => activeTab === tab.id && tab.element())}
             </div>
         </div>
     );
 };
+
+export const TabBar = React.memo(TabBarCom, (prevProps, nextProps) => {
+    return prevProps.tabs === nextProps.tabs;
+});
