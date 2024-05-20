@@ -1,5 +1,4 @@
-﻿import {plugins} from "./managers/plugins";
-
+﻿import { plugins } from "./managers/plugins";
 
 export function startAll()
 {

@@ -1,17 +1,14 @@
-﻿import {Patcher} from "../../api/patcher";
-import {Logger} from "../../api/logger";
-import {TextClasses} from "../../components/Components";
-import * as test from "node:test";
-import {React} from "../../modules/discordModules";
-import {MOD_VERSION} from "../../../consts";
-import Webpack from "../../api/webpack";
-import {waitForModule} from "../../api/modules";
-import {proxyCache} from "../../api/helpers";
-import {TabBar} from "../../components/TabBar";
-import {injectCSS, uninjectCSS} from "../../api/css";
-import {DistrustIcon} from "../../components/Distrust";
-import {plugins} from "../managers/plugins";
-import {PluginCard} from "../../components/Plugins";
+﻿import {Patcher} from "../../../api/patcher";
+import {Logger} from "../../../api/logger";
+import {MOD_VERSION} from "../../../../consts";
+import { webpack, common } from "../../../api/webpack";
+import {TabBar} from "./components/TabBar";
+import {injectCSS, uninjectCSS} from "../../../api/css";
+import {DistrustIcon} from "./components/Distrust";
+import {plugins} from "../../managers/plugins";
+import {PluginCard} from "./components/Plugins";
+
+const { TextClasses } = common.modules.components;
 
 const settingsLogger = new Logger('Settings')
 const injector = new Patcher('settings')
@@ -61,7 +58,7 @@ export async function start() {
       background: transparent;
       position: relative;
     }
-    
+
     .highlight {
       position: absolute;
       bottom: 0;
@@ -70,7 +67,7 @@ export async function start() {
       height: 5px;
       background-color: transparent;
     }
-    
+
     .channelTabBarItem.selected {
       background-color: transparent;
     }
@@ -84,7 +81,7 @@ export async function start() {
       display: flex;
     }
     h3, p {color: var(--header-primary); margin: 0;}`)
-    const settingsPage = await waitForModule(x=>x?.exports?.default?.prototype?.renderSidebar)
+    const settingsPage = await webpack.waitForModule(x=>x?.exports?.default?.prototype?.renderSidebar).then((module) => module?.default)
     injector.after(settingsPage?.prototype,'getPredicateSections', (args,b,c) => {
         console.log(args, b,c)
         b.unshift({section: "client-mod-page", label: 'uwu', element: () => <div> <TabBar tabs={tabs}/> </div>, icon: () => DistrustIcon})
@@ -99,19 +96,6 @@ export function VersionInfo(): React.ReactElement {
         </span>
     );
 }
-
-export const patches = [
-    {
-        find: ".versionHash",
-        replacements: [
-            {
-                match: /appArch,children:.{0,200}?className:\w+\.line,.{0,100}children:\w+}\):null/,
-                replace: `$&,distrust.plugins.getExports('settings').VersionInfo()`,
-            },
-        ],
-    }
-];
-
 
 export function stop()
 {

@@ -1,6 +1,9 @@
-﻿import {React} from "../modules/discordModules";
+﻿import { common } from "../../../../api/webpack";
 
-export const PluginCard = ({ plugin }) => {
+const { react: React } = common.modules;
+
+export const PluginCard = ({ plugin }) =>
+{
     const [isToggled, setIsToggled] = React.useState(false);
 
     return (

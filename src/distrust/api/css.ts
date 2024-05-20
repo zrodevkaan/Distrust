@@ -1,22 +1,28 @@
-﻿
-export const injectCSS = (id: string, css: string): void => {
-    const inject = () => {
-        let el = document.getElementById(id) as HTMLStyleElement;
-        if (!el) {
-            el = document.createElement('style');
-            el.id = id;
-            document.head.appendChild(el);
+﻿export const injectCSS = (id: string, css: string): void =>
+{
+    if (document.readyState === 'loading')
+    {
+        const inject = () =>
+        {
+            injectCSS(id, css)
+            document.removeEventListener('DOMContentLoaded', inject)
         }
-        if (el.textContent !== css) el.textContent = css;
-    };
-    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', inject) : inject();
-};
 
+        document.addEventListener('DOMContentLoaded', inject);
 
-
-export const uninjectCSS = (name: string): void => {
-    const style = document.getElementById(name);
-    if (style) {
-        document.head.removeChild(style);
+        return;
     }
+
+    let style = document.getElementById(id) as HTMLStyleElement;
+
+    if (!style)
+    {
+        style = document.createElement('style');
+        style.id = id;
+        document.head.appendChild(style);
+    }
+
+    if (style.textContent !== css) style.textContent = css;
 };
+
+export const uninjectCSS = (name: string): void => document.getElementById(name)?.remove?.()

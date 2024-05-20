@@ -1,11 +1,11 @@
-﻿import {Logger} from "../../../api/logger";
-import Webpack from "../../../api/webpack";
-import {Flux} from "../../../modules/discordModules";
-import {waitForModule} from "../../../api/modules";
-import {Patcher} from "../../../api/patcher";
-import {findInTree, proxyCache} from "../../../api/helpers";
-import {injectCSS, uninjectCSS} from "../../../api/css";
+﻿import { Logger } from "../../../api/logger";
+import { webpack, common } from "../../../api/webpack";
+import { Patcher } from "../../../api/patcher";
+import { findInTree, proxyCache } from "../../../api/helpers";
+import { injectCSS, uninjectCSS } from "../../../api/css";
 // import './styles.css' will implement later
+
+const Flux = common.modules.flux;
 
 // const URL_REGEX_FIND = /https:\/\/\S+/g;
 const PLUGIN_ID_FIND_REGEX = /plugin\/(.*?)\.asar/;
@@ -17,8 +17,8 @@ const ReactErrorListFallback =
 const logger = new Logger("recovery");
 let ReactErrors: Record<string, string> | undefined;
 const injector = new Patcher('recovery')
-const parser = proxyCache(() => Webpack.getModule(x=>x?.exports?.default?.parse))
-const ModalsModule = proxyCache(() => Webpack.getKeys(['ConfirmModal']))
+let parser = webpack.getModule(x => x?.exports?.default?.parse)
+let ModalsModule = webpack.getKeys('ConfirmModal')
 
 export const manifest =
     {
@@ -53,8 +53,8 @@ interface RouteInstance {
     transitionTo: (location: string) => void;
 }
 
-const ModalModule: Modals | undefined = proxyCache(() => Webpack.getKeys("openModalLazy"))
-const RouteModule: RouteInstance | undefined = proxyCache(() => Webpack.getKeys("transitionTo"))
+const ModalModule = webpack.getKeys<Modals>("openModalLazy")
+const RouteModule = webpack.getKeys<RouteInstance>("transitionTo")
 
 function startMainRecovery(): void {
     const log = (reason: string): void => logger.info(reason),
@@ -113,7 +113,7 @@ export async function start(): Promise<void> {
       text-align: center;
     }
     `)
-    const ErrorScreen = await waitForModule(x=>x?.exports?.default?.toString?.()?.includes(".AnalyticEvents.APP_CRASHED"));
+    const ErrorScreen = await webpack.waitForModule(x => x?.exports?.default?.toString?.()?.includes(".AnalyticEvents.APP_CRASHED")).then((module) => module?.default);
     //const ErrorScreen2 = await waitForModule((x=>x?.exports?.default?.toString?.()?.includes(".AnalyticEvents.APP_CRASHED")))
     void startErrors();
     injector.after(

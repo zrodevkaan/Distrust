@@ -1,7 +1,12 @@
-﻿import { React } from "../modules/discordModules";
-import { Divider } from "./Components";
+﻿import { common } from "../../../../api/webpack";
 
-export const TabBar = ({ tabs }) => {
+const {
+    react: React,
+    components: { Divider },
+} = common.modules;
+
+export const TabBar = ({ tabs }) =>
+{
     const [activeTab, setActiveTab] = React.useState(tabs[0].id);
     const [hoveredTab, setHoveredTab] = React.useState(null);
 
