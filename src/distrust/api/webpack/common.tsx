@@ -27,7 +27,7 @@ export const waitForReady = new Promise((r) =>
 })
 
 Promise.allSettled([
-    waitForModule(filters.byDefaultProps('Store')).then((module) =>
+    waitForModule(filters.byProps('Store')).then((module) =>
     {
         modules.flux = module;
     }),
