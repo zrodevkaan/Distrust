@@ -31,6 +31,7 @@ await Promise.all([
     external: ['electron'],
     logLevel: 'info',
     outfile: 'build/renderer.min.js',
-    platform: 'node',
+    platform: 'browser',
+    format: 'cjs',
   }),
 ])

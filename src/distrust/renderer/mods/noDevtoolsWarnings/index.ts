@@ -1,4 +1,4 @@
-import { Logger } from '../../api/logger';
+import { Logger } from '../../../api/logger';
 
 const logger = new Logger('NoDevtoolsWarnings');
 
@@ -13,15 +13,3 @@ export const manifest =
 export const start = (): void => {
     logger.info('Starting NoDevToolsWarnings');
 }
-
-export const patches = [
-    {
-        find: 'UserDefenses:',
-        replacements: [
-            {
-                match: /UserDefenses:function\(\)\{(.+?)\}/,
-                replace: 'UserDefenses:function(){return ()=>{}}',
-            },
-        ],
-    }
-]
