@@ -27,7 +27,7 @@ export const waitForReady = new Promise((r) =>
 })
 
 Promise.allSettled([
-    waitForModule(filters.byProps('Store')).then((module) =>
+    waitForModule(filters.byDefaultProps('Store')).then((module) =>
     {
         modules.flux = module;
     }),
@@ -51,7 +51,7 @@ Promise.allSettled([
         modules.components.TextClasses = module;
     }),
 
-    Promise.allSettled([
+    Promise.all([
         waitForModule(filters.byProps('createToast')),
         waitForModule(filters.byProps('showToast')),
     ]).then(([createToastModule, showToastModule]): void =>

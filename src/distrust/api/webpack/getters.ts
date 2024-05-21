@@ -11,17 +11,26 @@ export const filters =
 {
     byId: (id: string | number) => (module: WebpackModule): boolean => String(module.id) === String(id),
 
-    byProps: (...props: string[]) => (module: WebpackModule): boolean => {
+    /** only searches <module>.exports.default */
+    byDefaultProps: (...props: string[]) => (module: WebpackModule): boolean =>
+    {
+        const _default = module?.exports?.default;
+
+        return ['function', 'object'].includes(typeof _default) && props.every((prop) => prop in _default);
+    },
+
+    /** only searches <module>.exports */
+    byExportsProps: (...props: string[]) => (module: WebpackModule): boolean =>
+    {
         const exports = module?.exports;
 
-        return typeof exports === 'object'
-            ? props.every((prop) => prop in exports)
-                || (
-                    typeof exports?.default === 'object'
-                    && props.every((prop) => prop in exports.default)
-                )
-            : false
+        return typeof exports === 'object' && props.every((prop) => prop in exports);
     },
+
+    /** searches both <module>.exports and <module>.exports.default */
+    byProps: (...props: string[]) => (module: WebpackModule): boolean =>
+        filters.byExportsProps(...props)(module)
+        || filters.byDefaultProps(...props)(module),
 
     byPrototype: (...props: string[]) => (module: WebpackModule): boolean =>
         typeof module?.exports?.prototype === 'object' && props.every((prop) => prop in module.exports.prototype),
