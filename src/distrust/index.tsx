@@ -5,12 +5,22 @@ import { getExports, plugins, loadCoremods } from "./renderer/managers/plugins";
 import { startAll } from "./renderer";
 import { proxyCache } from "./api/helpers";
 import { injectCSS, uninjectCSS } from "./api/css";
+import {DataHandler} from "./renderer/managers/storage";
 
 declare global
 {
     interface Window
     {
        distrust: any
+        ace: any
+        DistrustNative:
+            {
+                ipcRenderer:
+                    {
+                        readFile: any
+                        writeFile: any
+                    }
+            }
     }
 }
 
@@ -23,6 +33,7 @@ window.distrust = new class Distrust
     common = common.modules;
     plugins = { plugins, getExports, proxyCache }
     css = { injectCSS, uninjectCSS }
+    storage = DataHandler;
 }
 
 Promise.allSettled([modules.waitForReady, common.waitForReady])

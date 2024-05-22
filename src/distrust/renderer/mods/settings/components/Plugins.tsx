@@ -1,8 +1,9 @@
 ﻿import { common } from "../../../../api/webpack";
+import { Mod } from "../../../managers/plugins";
 
 const { react: React } = common.modules;
 
-export const PluginCard = ({ plugin }) =>
+export const PluginCard = ({ plugin }: Mod) =>
 {
     const [isToggled, setIsToggled] = React.useState(false);
 

@@ -16,7 +16,7 @@ export const loadCoremods = async (): Promise<void> => {
     )
 }
 
-interface Mod {
+export interface Mod {
     start?: () => void;
     stop: () => void;
     manifest: {

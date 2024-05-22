@@ -7,6 +7,7 @@ import {injectCSS, uninjectCSS} from "../../../api/css";
 import {DistrustIcon} from "./components/Distrust";
 import {plugins} from "../../managers/plugins";
 import {PluginCard} from "./components/Plugins";
+import CustomCSSEditor from "./components/CustomCSS";
 
 const { TextClasses } = common.modules.components;
 
@@ -24,16 +25,6 @@ export const manifest =
 const tabs = [
     {
         id: 1,
-        label: 'Test',
-        element: () => (<div>Test Content</div>)
-    },
-    {
-        id: 2,
-        label: 'Test',
-        element: () => (<div>Test Content</div>)
-    },
-    {
-        id: 3,
         label: 'Plugins',
         element: () => (
             <div>
@@ -42,7 +33,22 @@ const tabs = [
                 ))}
             </div>
         )
+    },
+    {
+        id: 2,
+        label: 'Themes',
+        element: () => <div></div>
+    },
+    {
+        id: 3,
+        label: 'Custom CSS',
+        element: () => {
+            return (
+                <CustomCSSEditor/>
+            )
+        }
     }
+
 ];
 
 export default tabs;
@@ -50,6 +56,24 @@ export default tabs;
 
 export async function start() {
     injectCSS('settings', `
+    .editor-container {
+      width: 900px;
+      height: 540px;
+      margin: 20px auto;
+      position: relative;
+    }
+    
+    #editor {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      height: 100%;
+      width: 100%;
+      font-size: 20px;
+    }
+
     .channelTabBarItem {
       margin-right: 10px;
       padding: 5px 10px;

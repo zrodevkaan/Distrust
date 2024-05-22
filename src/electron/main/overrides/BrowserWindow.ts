@@ -1,6 +1,8 @@
 ﻿import * as electron from "electron";
-import { BrowserWindow } from "electron";
-import { join } from "path";
+import {BrowserWindow} from "electron";
+import {join} from "path";
+import {readFileSync, writeFileSync} from "fs";
+import {constants} from "node:fs";
 
 const { env } = process;
 
@@ -26,6 +28,24 @@ export default class PatchedBrowserWindow extends BrowserWindow {
     get: () => global.appSettings,
     configurable: true,
 });*/
+
+electron.ipcMain.handle('read-file', (event, filePath) => {
+    try {
+        return readFileSync(filePath, { encoding: 'utf8' });
+    } catch (error) {
+        return { error: error.message };
+    }
+});
+
+electron.ipcMain.handle('write-file', (event, { filePath, data }) => {
+    try {
+        const parsedData = JSON.stringify(data);
+        writeFileSync(filePath, parsedData);
+        return { success: true };
+    } catch (error) {
+        return { error: error.message };
+    }
+});
 
 const electronModule = require.resolve("electron");
 delete require.cache[electronModule]!.exports;

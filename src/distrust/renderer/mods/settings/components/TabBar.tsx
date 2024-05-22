@@ -5,7 +5,7 @@ const {
     components: { Divider },
 } = common.modules;
 
-const TabBarCom = ({ tabs }) => {
+export const TabBar = ({ tabs }) => {
     const [activeTab, setActiveTab] = React.useState(tabs[0].id);
     const [hoveredTab, setHoveredTab] = React.useState(null);
 
@@ -64,7 +64,3 @@ const TabBarCom = ({ tabs }) => {
         </div>
     );
 };
-
-export const TabBar = React.memo(TabBarCom, (prevProps, nextProps) => {
-    return prevProps.tabs === nextProps.tabs;
-});
