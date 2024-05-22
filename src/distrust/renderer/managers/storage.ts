@@ -10,17 +10,29 @@ class DataHandler
         this.fileName = `${id}.json`;
     }
 
-    get = async (key: string): Promise<any> => {
-        try {
+    get = async (key: string): Promise<any> => 
+    {
+        try 
+        {
             const fileContent = await window.DistrustNative.ipcRenderer.get(this.fileName);
             const jsonData = JSON.parse(fileContent);
-            coreLogger.info(jsonData)
             return jsonData[key];
         } catch (error) {
-            console.error(`Error getting key ${key} from file ${this.fileName}:`, error);
-            return null;
+            coreLogger.error(`Error getting key ${key} from file ${this.fileName}:`, error);
+            try 
+            {
+                await window.DistrustNative.ipcRenderer.set(this.fileName, JSON.stringify({}, null, 2));
+                const fileContent = await window.DistrustNative.ipcRenderer.get(this.fileName);
+                const jsonData = JSON.parse(fileContent);
+                return jsonData[key];
+            } catch (creationError) 
+            {
+                coreLogger.error(`Error creating file ${this.fileName}:`, creationError);
+                return null;
+            }
         }
     };
+
 
     set = async (key: string, value: any): Promise<void> => {
         try {

@@ -13,9 +13,9 @@ const themeLocation = path.join(os.homedir(), 'AppData', 'Roaming',`${MOD_NAME}`
 const settingsLocation = path.join(os.homedir(), 'AppData', 'Roaming',`${MOD_NAME}`,'settings');
 
 void webFrame.executeJavaScript(readFileSync(join(__dirname, `renderer.min.js`), { encoding: "utf8" }) + `\n//# sourceURL=distrust://webpack/renderer.js`);
-// contextBridge.exposeInMainWorld("fs", fs);
 
-contextBridge.exposeInMainWorld("DistrustNative", {
+contextBridge.exposeInMainWorld("DistrustNative", 
+{
     ipcRenderer: { get, set },
     locations: 
     {
@@ -25,12 +25,12 @@ contextBridge.exposeInMainWorld("DistrustNative", {
     }
 });
 
-function get(name: string) {
+function get(name: string) 
+{
     return ipcRenderer.invoke('readSettings', { path: settingsLocation, name });
 }
 
 function set(name: any, data: any)
 {
-    console.log(name, data);
     return ipcRenderer.invoke('writeSettings', { path: settingsLocation, name, data });
 }

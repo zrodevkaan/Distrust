@@ -19,16 +19,17 @@ export default class PatchedBrowserWindow extends BrowserWindow {
 }
 
 // i no no tink dis works
-/*Object.defineProperty(global, "appSettings", {
-    set: (v) => {
-        v.set("DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING", true);
-        delete global.appSettings;
-        global.appSettings = v;
-    },
-    get: () => global.appSettings,
-    configurable: true,
-});*/
+let appSettings: { settings?: any; };
 
+Object.defineProperty(global, "appSettings", {
+    get: () => appSettings,
+    set: (v: { settings?: any, }) => {
+        if (!v.hasOwnProperty("settings")) v.settings = {};
+        v.settings.DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING = true;
+        v.settings.SKIP_HOST_UDPATE = true // does this even work
+        appSettings = v;
+    }
+});
 const electronModule = require.resolve("electron");
 delete require.cache[electronModule]!.exports;
 

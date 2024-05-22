@@ -14,7 +14,8 @@ type FolderStructure = {
 };
 const APPDATA_PATH = path.join(os.homedir(), 'AppData', 'Roaming');
 
-electron.ipcMain.handle('readSettings', (event, { path, name }) => {
+electron.ipcMain.handle('readSettings', (event, { path, name }) => 
+{
     try {
         return readFileSync(path + `\\${name}`, { encoding: 'utf8' });
     } catch (error) {
@@ -22,16 +23,17 @@ electron.ipcMain.handle('readSettings', (event, { path, name }) => {
     }
 });
 
-electron.ipcMain.handle('writeSettings', async (event, { path, name, data }) => {
+electron.ipcMain.handle('writeSettings', async (event, { path, name, data }) => 
+{
     try {
         const filePath = path + `\\${name}`;
         if (!existsSync(filePath)) {
             const stream = createWriteStream(filePath, { flags: 'w' });
-            stream.write(data, 'utf8', () => {
+            stream.write(data, 'utf8', () => 
+            {
                 stream.end();
             });
         }
-        console.log(filePath,data)
         writeFileSync(filePath, data, { encoding: 'utf8' });
         return { success: true, logger: filePath };
     } catch (error) {
@@ -40,19 +42,23 @@ electron.ipcMain.handle('writeSettings', async (event, { path, name, data }) => 
 });
 
 
-function createFolderTree(basePath: string, structure: FolderStructure) {
+function createFolderTree(basePath: string, structure: FolderStructure) 
+{
     Object.keys(structure).forEach(folder => {
         const folderPath = path.join(basePath, folder);
-        if (!fs.existsSync(folderPath)) {
+        if (!fs.existsSync(folderPath)) 
+        {
             fs.mkdirSync(folderPath, { recursive: true });
         }
 
         const subStructure = structure[folder];
         if (Array.isArray(subStructure)) {
-            subStructure.forEach(subFolder => {
+            subStructure.forEach(subFolder => 
+            {
                 if (typeof subFolder === 'string') {
                     const subFolderPath = path.join(folderPath, subFolder);
-                    if (!fs.existsSync(subFolderPath)) {
+                    if (!fs.existsSync(subFolderPath))
+                    {
                         fs.mkdirSync(subFolderPath, { recursive: true });
                     }
                 }
