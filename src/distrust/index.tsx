@@ -7,23 +7,6 @@ import { proxyCache } from "./api/helpers";
 import { injectCSS, uninjectCSS } from "./api/css";
 import {DataHandler} from "./renderer/managers/storage";
 
-declare global
-{
-    interface Window
-    {
-       distrust: any
-        ace: any
-        DistrustNative:
-            {
-                ipcRenderer:
-                    {
-                        readFile: any
-                        writeFile: any
-                    }
-            }
-    }
-}
-
 // @ts-ignore
 window.distrust = new class Distrust
 {

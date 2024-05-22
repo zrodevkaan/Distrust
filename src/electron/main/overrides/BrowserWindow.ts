@@ -29,24 +29,6 @@ export default class PatchedBrowserWindow extends BrowserWindow {
     configurable: true,
 });*/
 
-electron.ipcMain.handle('read-file', (event, filePath) => {
-    try {
-        return readFileSync(filePath, { encoding: 'utf8' });
-    } catch (error) {
-        return { error: error.message };
-    }
-});
-
-electron.ipcMain.handle('write-file', (event, { filePath, data }) => {
-    try {
-        const parsedData = JSON.stringify(data);
-        writeFileSync(filePath, parsedData);
-        return { success: true };
-    } catch (error) {
-        return { error: error.message };
-    }
-});
-
 const electronModule = require.resolve("electron");
 delete require.cache[electronModule]!.exports;
 
