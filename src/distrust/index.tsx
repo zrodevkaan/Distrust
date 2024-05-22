@@ -6,6 +6,7 @@ import { startAll } from "./renderer";
 import { proxyCache } from "./api/helpers";
 import { injectCSS, uninjectCSS } from "./api/css";
 import {DataHandler} from "./renderer/managers/storage";
+import {generalSettings} from "./devConsts";
 
 // @ts-ignore
 window.distrust = new class Distrust
@@ -24,4 +25,5 @@ Promise.allSettled([modules.waitForReady, common.waitForReady])
     {
        await loadCoremods()
        startAll()
+       injectCSS('customCss',await generalSettings.get('customCss'))
     })
