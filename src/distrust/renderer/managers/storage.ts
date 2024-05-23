@@ -43,9 +43,7 @@ class DataHandler
             } catch (error) {
               fileContent = JSON.parse("{}");
             }
-            coreLogger.info(fileContent)
             fileContent[key] = value;
-            coreLogger.info(JSON.stringify(fileContent))
             await window.DistrustNative.ipcRenderer.set(this.fileName, JSON.stringify(fileContent));
         } catch (error) {
             console.error(`Error setting key ${key} to value ${value} in file ${this.fileName}:`, error);

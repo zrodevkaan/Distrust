@@ -95,7 +95,7 @@ const patchPlaintext = (modules: WebpackChunk[1], id: string | number, module: W
                         else
                             sources[id] = sources[id].replace(replacement.match, replacement.replace);
 
-                        coreLogger.info('Plaintext patched', id, replacement, sources[id])
+                        // for logging. coreLogger.info('Plaintext patched', id, replacement, sources[id])
                     })
 
                     hasPatches = true;
