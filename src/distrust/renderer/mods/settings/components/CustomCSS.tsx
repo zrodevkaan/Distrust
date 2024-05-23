@@ -23,10 +23,6 @@ const CustomCSSEditor = () => {
             });
         };
         document.body.appendChild(script);
-
-        return () => {
-            uninjectCSS('customCss');
-        };
     }, []);
 
     modules.react.useEffect(() => {
