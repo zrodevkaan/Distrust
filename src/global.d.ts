@@ -13,6 +13,7 @@ declare global {
                 plugins: string;
                 themes: string;
                 settings: string;
+                fmkadmapgofadopljbjfkapdkoienihi: string;
             };
         };
     }

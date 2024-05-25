@@ -4,10 +4,10 @@ import "./overrides/network";
 import path from "node:path";
 import * as fs from "fs";
 import * as os from "os";
-import electron from "electron";
+import electron, {session, app} from "electron";
 import {readFileSync, writeFileSync} from "fs";
 import {createWriteStream, existsSync} from "node:fs";
-import {coreLogger} from "../../distrust/devConsts";
+import {ReactDevToolsPath} from "./overrides/reactDevTools";
 
 type FolderStructure = {
     [key: string]: FolderStructure | [];
@@ -18,7 +18,7 @@ electron.ipcMain.handle('readSettings', (event, { path, name }) =>
 {
     try {
         return readFileSync(path + `\\${name}`, { encoding: 'utf8' });
-    } catch (error) {
+    } catch (error: any) {
         return { error: error.message };
     }
 });
@@ -36,7 +36,7 @@ electron.ipcMain.handle('writeSettings', async (event, { path, name, data }) =>
         }
         writeFileSync(filePath, data, { encoding: 'utf8' });
         return { success: true, logger: filePath };
-    } catch (error) {
+    } catch (error: any) {
         return { error: error.message };
     }
 });
@@ -74,8 +74,13 @@ const folderStructure: FolderStructure = {
         plugins: [],
         themes: [],
         data: [],
-        settings: []
+        settings: [],
+        fmkadmapgofadopljbjfkapdkoienihi: []
     }
 };
 
 createFolderTree(APPDATA_PATH, folderStructure);
+app.whenReady().then(async () => {
+    console.log("App ready");
+    session.defaultSession.loadExtension(ReactDevToolsPath);
+})

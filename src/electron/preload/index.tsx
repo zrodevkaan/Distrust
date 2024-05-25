@@ -11,6 +11,7 @@ if (ogPreload) require(ogPreload);
 const pluginLocation = path.join(os.homedir(), 'AppData', 'Roaming',`${MOD_NAME}`,'plugins');
 const themeLocation = path.join(os.homedir(), 'AppData', 'Roaming',`${MOD_NAME}`,'themes');
 const settingsLocation = path.join(os.homedir(), 'AppData', 'Roaming',`${MOD_NAME}`,'settings');
+const reactLocation = path.join(os.homedir(), 'AppData', 'Roaming',`${MOD_NAME}`,'fmkadmapgofadopljbjfkapdkoienihi');
 
 void webFrame.executeJavaScript(readFileSync(join(__dirname, `renderer.min.js`), { encoding: "utf8" }) + `\n//# sourceURL=distrust://webpack/renderer.js`);
 
@@ -21,7 +22,8 @@ contextBridge.exposeInMainWorld("DistrustNative",
     {
         plugins: pluginLocation,
         themes: themeLocation,
-        settings: settingsLocation
+        settings: settingsLocation,
+        react: reactLocation,
     }
 });
 

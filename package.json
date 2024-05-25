@@ -10,9 +10,11 @@
     "buildElectron": "node scripts/build.mjs --main",
     "buildPreload": "node scripts/build.mjs --preload",
     "buildDistrust": "node scripts/build.mjs --renderer",
-    "build": "node scripts/build.mjs --all"
+    "build": "node scripts/build.mjs --all",
+    "inject": "node scripts/installer.js"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.5",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.21",
     "@typescript-eslint/eslint-plugin": "latest",
@@ -24,6 +26,7 @@
   "dependencies": {
     "@electron/asar": "^3.2.9",
     "@types/node": "^20.12.12",
+    "adm-zip": "^0.5.12",
     "esbuild": "^0.20.1",
     "process": "^0.11.10",
     "standalone-electron-types": "^1.0.0",

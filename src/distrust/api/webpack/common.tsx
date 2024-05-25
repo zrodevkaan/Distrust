@@ -9,6 +9,7 @@ export const modules = {
         Divider: null as any,
         DividerClasses: null as any,
         TextClasses: null as any,
+        FormSwitch: null as any,
     },
     toast: null as unknown as (message: string, kind?: number, options?: Record<string, unknown>) => void,
 }
@@ -44,6 +45,11 @@ Promise.allSettled([
         {
             return <div className={module.sectionDivider} style={style} />;
         };
+    }),
+    
+    waitForModule(filters.byProps('FormSwitch')).then((module) =>
+    {
+        modules.components.FormSwitch = module;
     }),
 
     waitForModule(filters.byProps('text-xs/normal')).then((module) =>
