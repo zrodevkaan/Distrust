@@ -1,7 +1,7 @@
 ﻿const fs = require('fs');
 const path = require('path');
-const readline = require('readline');
-const distrustPath = path.resolve('distrust.js').replaceAll('\\','\\\\');
+const readline = require('readline'); // overflow told me this existed.
+const distrustPath = path.resolve('build','distrust.js').replaceAll('\\','\\\\'); // tickets please :>
 const args = process.argv.slice(2);
 const version = args[1];
 
