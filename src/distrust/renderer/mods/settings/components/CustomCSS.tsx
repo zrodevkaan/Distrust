@@ -16,8 +16,8 @@ const CustomCSSEditor = () => {
             const editor = window.ace.edit("editor");
             editor.setTheme("ace/theme/cobalt");
             editor.session.setMode("ace/mode/css");
-            editor.session.setValue(await generalSettings.get('customCss'))
-            setEditorContent(await generalSettings.get('customCss'))
+            editor.session.setValue(editorContent ?? await generalSettings.get('customCss'))
+            setEditorContent(editorContent ?? await generalSettings.get('customCss'))
             editor.session.on("change", function () {
                 const newContent = editor.getValue();
                 setEditorContent(newContent);
