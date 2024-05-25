@@ -8,6 +8,7 @@ import {DistrustIcon} from "./components/Distrust";
 import {plugins} from "../../managers/plugins";
 import {PluginCard} from "./components/Plugins";
 import CustomCSSEditor from "./components/CustomCSS";
+import {modules} from "../../../api/webpack/common";
 
 const { TextClasses } = common.modules.components;
 
@@ -107,7 +108,7 @@ export async function start() {
     h3, p {color: var(--header-primary); margin: 0;}`)
     const settingsPage = await webpack.waitForModule(x=>x?.exports?.default?.prototype?.renderSidebar).then((module) => module?.default)
     injector.after(settingsPage?.prototype,'getPredicateSections', (args,b,c) => {
-        b.unshift({section: "client-mod-page", label: 'uwu', element: () => <div> <TabBar tabs={tabs}/> </div>, icon: () => DistrustIcon})
+        b.unshift({ariaLabel: 'uwu', section: "client-mod-page", label: 'Distrust', element: () => <div> <TabBar tabs={tabs}/> </div>, icon: modules.react.createElement(DistrustIcon)})
     })
     settingsLogger.info("Starting setting plugin")
 }
