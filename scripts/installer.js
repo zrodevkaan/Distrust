@@ -145,9 +145,14 @@ userProfiles.forEach(profilePath => {
 });
 
 if (allTargetPaths.length === 0) {
-    Logger.rainbow(`OOPSIE WOOPSIE!! Uwu We made a fluffity fluff!! A wittle oopsie woopsie! The code monkeys at our headquarters are working VERY HARD to fix this! (or just download ${version})`);
+    if (Math.random() < 0.01) {
+        Logger.rainbow(`OOPSIE WOOPSIE!! Uwu We made a fluffity fluff!! A wittle oopsie woopsie! The code monkeys at our headquarters are working VERY HARD to fix this! (or just download ${version})`);
+    } else {
+        Logger.red(`Double check if ${version} is installed.`);
+    }
     process.exit(1);
 }
+
 
 Logger.yellow('We found more then one discord on your machine. Where would you like to install it?:');
 allTargetPaths.forEach((target, index) => {

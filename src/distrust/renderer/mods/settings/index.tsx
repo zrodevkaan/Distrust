@@ -19,7 +19,7 @@ export const manifest =
     {
         name: 'Settings',
         version: '1.0.0',
-        description: 'settings plugin coremod ;3',
+        description: 'settings plugin coremod :3',
         authors: ['kaan']
     }
 

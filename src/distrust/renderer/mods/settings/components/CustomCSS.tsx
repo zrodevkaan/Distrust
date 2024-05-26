@@ -81,9 +81,11 @@ const CustomCSSEditor = () => {
             >
                 Live Update CSS
             </FormSwitch>
-            <Modals.Button onClick={() => injectCSS('customCss', editorContent)}>
-                Update CSS
-            </Modals.Button>
+            <div style={{display: "flex", justifyContent: "center", marginBottom: "10px"}}>
+                <Modals.Button onClick={() => injectCSS('customCss', editorContent)}>
+                    Update CSS
+                </Modals.Button>
+            </div>
         </>
     );
 };
