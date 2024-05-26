@@ -56,12 +56,12 @@ Promise.allSettled([
 
     waitForModule(filters.byProps('MenuItem')).then((module) =>
     {
-        modules.components.MenuItem = module;
+        modules.components.MenuItem = module.MenuItem;
     }),
 
     waitForModule(filters.byProps('Menu')).then((module) =>
     {
-        modules.components.Menu = module;
+        modules.components.Menu = module.Menu;
     }),
     
     waitForModule(filters.byProps('text-xs/normal')).then((module) =>

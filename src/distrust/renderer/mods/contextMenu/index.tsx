@@ -36,7 +36,7 @@ const ContextComponents: ContextMenuProps = {
 export const menuItems: { [key: string]: MenuItem[] } = {};
 
 export const makeItem = (navId: string, label: string, action: any, icon?: any): React.ReactElement | null => (
-    <modules.components.MenuItem.MenuItem id={navId} label={label} action={action} icon={icon} />
+    <modules.components.MenuItem id={navId} label={label} action={action} icon={icon} />
 );
 
 export const buildItem = (navId: string, callback: (data: any, menu: ContextMenuData) => React.ReactElement | null) => {
@@ -55,7 +55,7 @@ export const finallyIBuildContextMenu = (menu: ContextMenuData): React.ReactElem
     const { MenuGroup, ContextMenu } = ContextComponents;
 
     if (!ContextMenu || menu.uwufied) return null;
-    if (!MenuGroup) return <modules.components.Menu.Menu {...menu} uwufied={true} />;
+    if (!MenuGroup) return <modules.components.Menu {...menu} uwufied={true} />;
 
     const children = Array.isArray(menu.children) ? [...menu.children] : [menu.children];
 
@@ -74,7 +74,7 @@ export const finallyIBuildContextMenu = (menu: ContextMenuData): React.ReactElem
 
     menu.children = children;
 
-    return <modules.components.Menu.Menu {...menu} uwufied={true} />;
+    return <modules.components.Menu {...menu} uwufied={true} />;
 };
 export const start = () => {
     coreLogger.info('ContextMenu is in testing!');
