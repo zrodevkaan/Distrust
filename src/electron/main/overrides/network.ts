@@ -10,7 +10,7 @@ session.defaultSession.webRequest.onHeadersReceived(({ responseHeaders }, callba
 });
 
 session.defaultSession.webRequest.onBeforeRequest(({ url }, callback) => {
-    const pattern = /api\/v\d\/(science|metrics|webhooks)/;
+    const pattern = /api\/v\d\/(science|metrics)/;
     const michealDontLeaveMeHere = pattern.test(url);
 
     callback({ cancel: michealDontLeaveMeHere });
