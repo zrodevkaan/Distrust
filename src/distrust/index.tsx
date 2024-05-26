@@ -7,6 +7,7 @@ import { proxyCache } from "./api/helpers";
 import { injectCSS, uninjectCSS } from "./api/css";
 import {DataHandler} from "./renderer/managers/storage";
 import {generalSettings} from "./devConsts";
+import {finallyIBuildContextMenu, makeItem} from "./renderer/mods/contextMenu";
 
 // @ts-ignore
 window.distrust = new class Distrust
@@ -18,6 +19,7 @@ window.distrust = new class Distrust
     plugins = { plugins, getExports, proxyCache }
     css = { injectCSS, uninjectCSS }
     storage = DataHandler;
+    contextMenu = { finallyIBuildContextMenu, makeItem }
 }
 
 Promise.allSettled([modules.waitForReady, common.waitForReady])

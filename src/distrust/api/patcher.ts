@@ -1,4 +1,6 @@
 ﻿import { Logger } from "./logger";
+import {buildItem, ContextMenuData} from "../renderer/mods/contextMenu";
+import {coreLogger} from "../devConsts";
 
 interface TargetObject
 {
@@ -12,7 +14,7 @@ type InsteadCallback = (originalMethod: Function, ...args: any[]) => any;
 export class Patcher
 {
     private log: Logger;
-    private patches: Map<TargetObject, Map<string, Function>>;
+    private readonly patches: Map<TargetObject, Map<string, Function>>;
 
     constructor(context: string)
     {
@@ -20,6 +22,13 @@ export class Patcher
         this.patches = new Map();
     }
 
+    buildItem(navId: string, callback: (data: any, menu: ContextMenuData) => (React.ReactElement | null))
+    {
+        const itemBuilt = buildItem(navId, callback);
+        this.patches.set(itemBuilt, this.patches)
+        return itemBuilt;
+    }
+    
     private addPatch(targetObject: TargetObject, methodName: string, originalMethod: Function)
     {
         if (!this.patches.has(targetObject))
@@ -98,6 +107,8 @@ export class Patcher
                 targetObject[methodName] = originalMethod
             )
         );
+        
+        this.patches.keys().forEach((x: () => void)=>{x()})
 
         this.patches.clear();
 

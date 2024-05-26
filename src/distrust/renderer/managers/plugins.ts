@@ -5,6 +5,7 @@ export const pluginPlaintexts: any[] = [
     require('../mods/experiments/patches'),
     require('../mods/noDevtoolsWarnings/patches'),
     require('../mods/settings/patches'),
+    require('../mods/contextMenu/patches'),
 ];
 
 export const loadCoremods = async (): Promise<void> => {
@@ -13,6 +14,7 @@ export const loadCoremods = async (): Promise<void> => {
         require('../mods/noDevtoolsWarnings'),
         require('../mods/recovery'),
         require('../mods/settings'),
+        require('../mods/contextMenu'),
     )
 }
 
