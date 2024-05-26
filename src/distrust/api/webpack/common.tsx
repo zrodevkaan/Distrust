@@ -10,6 +10,8 @@ export const modules = {
         DividerClasses: null as any,
         TextClasses: null as any,
         FormSwitch: null as any,
+        MenuItem: null as any,
+        Menu: null as any,
     },
     toast: null as unknown as (message: string, kind?: number, options?: Record<string, unknown>) => void,
 }
@@ -52,6 +54,16 @@ Promise.allSettled([
         modules.components.FormSwitch = module;
     }),
 
+    waitForModule(filters.byProps('MenuItem')).then((module) =>
+    {
+        modules.components.MenuItem = module;
+    }),
+
+    waitForModule(filters.byProps('Menu')).then((module) =>
+    {
+        modules.components.Menu = module;
+    }),
+    
     waitForModule(filters.byProps('text-xs/normal')).then((module) =>
     {
         modules.components.TextClasses = module;
