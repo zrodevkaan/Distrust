@@ -144,6 +144,12 @@ userProfiles.forEach(profilePath => {
     }
 });
 
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+
 if (allTargetPaths.length === 0) {
     if (Math.random() < 0.01) {
         Logger.rainbow(`OOPSIE WOOPSIE!! Uwu We made a fluffity fluff!! A wittle oopsie woopsie! The code monkeys at our headquarters are working VERY HARD to fix this! (or just download ${version})`);
@@ -153,16 +159,33 @@ if (allTargetPaths.length === 0) {
     process.exit(1);
 }
 
+if (allTargetPaths.length > 1) {
+    Logger.yellow('We found more than one Discord on your machine. Where would you like to install it?');
+    allTargetPaths.forEach((target, index) => {
+        Logger.green(`${index + 1}: ${target.path} (User Profile: ${target.userProfile})`);
+    });
 
-Logger.yellow('We found more then one discord on your machine. Where would you like to install it?:');
-allTargetPaths.forEach((target, index) => {
-    Logger.green(`${index + 1}: ${target.path} (User Profile: ${target.userProfile})`);
-});
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+    rl.question('Please enter the number of the path you want to select: ', (answer) => {
+        const selectedIndex = parseInt(answer) - 1;
+        if (selectedIndex >= 0 && selectedIndex < allTargetPaths.length) {
+            const selectedPath = allTargetPaths[selectedIndex].path;
+            Logger.green(`Selected target path: ${selectedPath}`);
+            selectTargetPath(selectedPath);
+        } else {
+            Logger.red('Invalid selection. Exiting.');
+            process.exit(1);
+        }
+    });
+} else if (allTargetPaths.length === 1) {
+    const selectedPath = allTargetPaths[0].path;
+    Logger.green(`Automatically selected target path: ${selectedPath}`);
+    selectTargetPath(selectedPath);
+}
 
 const selectTargetPath = (selectedPath) => {
     const indexPath = path.join(selectedPath, 'index.js');
@@ -184,7 +207,7 @@ const selectTargetPath = (selectedPath) => {
                         return;
                     }
                     Logger.green('index.js modified successfully.');
-                    moveBuildFiles(selectedPath)
+                    moveBuildFiles(selectedPath);
                     rl.close();
                 });
             } else {
@@ -197,10 +220,4 @@ const selectTargetPath = (selectedPath) => {
 
 function modifyIndexFile() {
     return `require(\`${distrustPath}\`);\nmodule.exports = require('./core.asar');`;
-}
-
-if (allTargetPaths.length === 1) {
-    const selectedPath = allTargetPaths[0].path;
-    Logger.green(`Automatically selected target path: ${selectedPath}`);
-    selectTargetPath(selectedPath);
 }
