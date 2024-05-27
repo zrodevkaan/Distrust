@@ -149,7 +149,6 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-
 if (allTargetPaths.length === 0) {
     if (Math.random() < 0.01) {
         Logger.rainbow(`OOPSIE WOOPSIE!! Uwu We made a fluffity fluff!! A wittle oopsie woopsie! The code monkeys at our headquarters are working VERY HARD to fix this! (or just download ${version})`);
@@ -163,11 +162,6 @@ if (allTargetPaths.length > 1) {
     Logger.yellow('We found more than one Discord on your machine. Where would you like to install it?');
     allTargetPaths.forEach((target, index) => {
         Logger.green(`${index + 1}: ${target.path} (User Profile: ${target.userProfile})`);
-    });
-
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
     });
 
     rl.question('Please enter the number of the path you want to select: ', (answer) => {
