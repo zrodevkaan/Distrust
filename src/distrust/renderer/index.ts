@@ -10,6 +10,7 @@ export async function startAll() {
         plugins.forEach(plugin => {
             if (!disabledPlugins.includes(plugin.manifest.name)) {
                 plugin.start && plugin.start();
+                plugin.started = true;
             }
         });
     } catch (error) {

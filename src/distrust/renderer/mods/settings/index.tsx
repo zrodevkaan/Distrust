@@ -9,6 +9,8 @@ import {plugins} from "../../managers/plugins";
 import {PluginCard} from "./components/Plugins";
 import CustomCSSEditor from "./components/CustomCSS";
 import {modules} from "../../../api/webpack/common";
+import {themes} from "../../managers/themes";
+import {ThemeCard} from "./components/Themes";
 
 const { TextClasses } = common.modules.components;
 
@@ -39,7 +41,13 @@ const tabs = [
     {
         id: 2,
         label: 'Themes',
-        element: () => <div></div>
+        element: () => (
+            <div>
+                {themes.map(plugin => (
+                    <ThemeCard theme={plugin} />
+                ))}
+            </div>
+        )
     },
     {
         id: 3,

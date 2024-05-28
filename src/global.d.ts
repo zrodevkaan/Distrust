@@ -1,4 +1,4 @@
-﻿import {Mod} from "./distrust/renderer/managers/plugins";
+﻿import {Mod, Theme} from "./distrust/renderer/managers/plugins";
 
 export {};
 
@@ -11,6 +11,7 @@ declare global {
                 set: (name: string, data: any) => Promise<string>;
                 get: (key: string) => Promise<void>;
                 loadPlugins: () => Promise<Mod[]>;
+                loadThemes: () => Promise<Theme[]>;
             };
             locations: {
                 plugins: string;

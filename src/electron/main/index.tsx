@@ -89,6 +89,53 @@ electron.ipcMain.handle('loadPlugins', async (event, { path: pluginsPath }) => {
     }
 });
 
+electron.ipcMain.handle('loadThemes', async (event, { path: themesPath }) => {
+    try {
+        const themes = [];
+
+        const themeDirectories = fs.readdirSync(themesPath, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+
+        for (const dir of themeDirectories) {
+            const manifestPath = path.join(themesPath, dir, 'manifest.json');
+            const stylePath = path.join(themesPath, dir, 'style.css');
+
+            if (fs.existsSync(manifestPath) && fs.existsSync(stylePath)) {
+                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+
+                manifest.name = manifest.name || '';
+                manifest.authors = manifest.authors || [''];
+                manifest.description = manifest.description || '';
+                manifest.version = manifest.version || '';
+
+                const cssContent = fs.readFileSync(stylePath, 'utf-8');
+
+                themes.push({
+                    key: manifest.name,
+                    manifest,
+                    cssContent
+                });
+
+                const missingFields = [];
+                if (!manifest.name) missingFields.push('name');
+                if (!manifest.authors) missingFields.push('authors');
+                if (!manifest.description) missingFields.push('description');
+                if (!manifest.version) missingFields.push('version');
+                if (missingFields.length > 0) {
+                    console.warn(`Manifest for theme in ${path.join(themesPath, dir)} is missing fields: ${missingFields.join(', ')}. Defaulted to empty string.`);
+                }
+            } else {
+                console.error(`Manifest or style.css not found in ${path.join(themesPath, dir)}`);
+            }
+        }
+
+        return { status: 'success', themes };
+    } catch (error) {
+        console.error('Error loading themes:', error);
+        return { status: 'error', message: error.message };
+    }
+});
 
 
 function createFolderTree(basePath: string, structure: FolderStructure) 

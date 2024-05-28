@@ -1,22 +1,22 @@
 ﻿import { common } from "../../../../api/webpack";
-import { Mod } from "../../../managers/plugins";
-import { enable, disable, getExports } from "../../../managers/plugins";
+import { Theme } from "../../../managers/themes";
+import { enable, disable, getExports } from "../../../managers/themes";
 
 const { react: React } = common.modules;
 
-export const PluginCard = ({ plugin }: Mod) => {
+export const ThemeCard = ({ theme }: { theme: Theme }) => {
     const [isToggled, setIsToggled] = React.useState(false);
 
     React.useEffect(() => {
-        const isEnabled = getExports(plugin.manifest.name)?.started;
+        const isEnabled = getExports(theme.manifest.name)?.started;
         setIsToggled(!!isEnabled);
-    }, [plugin]);
+    }, [theme]);
 
     const handleToggle = () => {
         if (isToggled) {
-            disable(plugin.manifest.name);
+            disable(theme.manifest.name);
         } else {
-            enable(plugin.manifest.name);
+            enable(theme.manifest.name);
         }
         setIsToggled(!isToggled);
     };
@@ -25,11 +25,11 @@ export const PluginCard = ({ plugin }: Mod) => {
         <div style={{ marginBottom: '10px' }}>
             <div className="card" onClick={handleToggle} style={{ cursor: 'pointer' }}>
                 <div className="info">
-                    <h3><strong>{plugin.manifest.name}</strong></h3>
-                    <p>{plugin.manifest.authors.join(", ")}</p>
-                    <p>{plugin.manifest.version}</p>
+                    <h3><strong>{theme.manifest.name}</strong></h3>
+                    <p>{theme.manifest.authors.join(", ")}</p>
+                    <p>{theme.manifest.version}</p>
                 </div>
-                <p>{plugin.manifest.description}</p>
+                <p>{theme.manifest.description}</p>
             </div>
         </div>
     );

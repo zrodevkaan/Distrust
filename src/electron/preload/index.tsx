@@ -17,7 +17,7 @@ void webFrame.executeJavaScript(readFileSync(join(__dirname, `renderer.min.js`),
 
 contextBridge.exposeInMainWorld("DistrustNative", 
 {
-    ipcRenderer: { get, set, loadPlugins },
+    ipcRenderer: { get, set, loadPlugins, loadThemes },
     locations: 
     {
         plugins: pluginLocation,
@@ -59,6 +59,23 @@ async function loadPlugins() {
         }
     } catch (error) {
         console.error('Error loading plugins:', error);
+        return [];
+    }
+}
+
+async function loadThemes() {
+    try {
+        const result = await ipcRenderer.invoke('loadThemes', { path: themeLocation });
+        if (result.status === 'success') {
+            return result.themes.map((theme: any) => {
+                return theme;
+            }).filter((theme: any) => theme);
+        } else {
+            console.error('Failed to load themes:', result.message);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error loading themes:', error);
         return [];
     }
 }

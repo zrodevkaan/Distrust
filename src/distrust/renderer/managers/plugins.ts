@@ -33,6 +33,7 @@ export interface Mod {
         coreMod?: boolean
     };
     [x: string]: any;
+    started: boolean;
 }
 
 export function getExports(id: string) {
@@ -44,6 +45,7 @@ export function disable(id: string): boolean {
     if (!plugin) return false;
     plugin.stop();
     coreLogger.info(`${plugin?.manifest?.name} was remotely disabled`);
+    plugin.started = false;
     // Update the generalSettings disabled list
     const disabledPlugins = generalSettings.get('disabled') || {};
     disabledPlugins[plugin?.manifest?.name] = true;
@@ -57,6 +59,7 @@ export function enable(id: string): boolean {
     plugin.start();
     coreLogger.info(`${plugin.manifest.name} was remotely enabled`);
     // Update the generalSettings disabled list
+    plugin.started = false;
     const disabledPlugins = generalSettings.get('disabled') || {};
     delete disabledPlugins[plugin.manifest.name]
     generalSettings.set('disabled', disabledPlugins);
