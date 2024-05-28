@@ -33,7 +33,7 @@ const tabs = [
         element: () => (
             <div>
                 {plugins.map(plugin => (
-                    <PluginCard plugin={plugin} />
+                    !plugin.manifest.coreMod && <PluginCard key={plugin.id} plugin={plugin}/>
                 ))}
             </div>
         )
