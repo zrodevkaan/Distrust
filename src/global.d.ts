@@ -1,4 +1,6 @@
-﻿export {};
+﻿import {Mod} from "./distrust/renderer/managers/plugins";
+
+export {};
 
 declare global {
     interface Window {
@@ -8,6 +10,7 @@ declare global {
             ipcRenderer: {
                 set: (name: string, data: any) => Promise<string>;
                 get: (key: string) => Promise<void>;
+                loadPlugins: () => Promise<Mod[]>;
             };
             locations: {
                 plugins: string;

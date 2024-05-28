@@ -8,6 +8,7 @@ import electron, {session, app} from "electron";
 import {readFileSync, writeFileSync} from "fs";
 import {createWriteStream, existsSync} from "node:fs";
 import {ReactDevToolsPath} from "./overrides/reactDevTools";
+import {coreLogger} from "../../distrust/devConsts";
 
 type FolderStructure = {
     [key: string]: FolderStructure | [];
@@ -40,6 +41,54 @@ electron.ipcMain.handle('writeSettings', async (event, { path, name, data }) =>
         return { error: error.message };
     }
 });
+electron.ipcMain.handle('loadPlugins', async (event, { path: pluginsPath }) => {
+    try {
+        const plugins = [];
+
+        const pluginDirectories = fs.readdirSync(pluginsPath, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+
+        for (const dir of pluginDirectories) {
+            const manifestPath = path.join(pluginsPath, dir, 'manifest.json');
+            const indexPath = path.join(pluginsPath, dir, 'index.js');
+
+            if (fs.existsSync(manifestPath) && fs.existsSync(indexPath)) {
+                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+
+                manifest.name = manifest.name || '';
+                manifest.authors = manifest.authors || [''];
+                manifest.description = manifest.description || '';
+                manifest.version = manifest.version || '';
+
+                const fileContent = fs.readFileSync(indexPath, 'utf-8');
+
+                plugins.push({
+                    key: manifest.name,
+                    manifest,
+                    fileContent
+                });
+
+                const missingFields = [];
+                if (!manifest.name) missingFields.push('name');
+                if (!manifest.authors) missingFields.push('authors');
+                if (!manifest.description) missingFields.push('description');
+                if (!manifest.version) missingFields.push('version');
+                if (missingFields.length > 0) {
+                    console.warn(`Manifest for plugin in ${path.join(pluginsPath, dir)} is missing fields: ${missingFields.join(', ')}. Defaulted to empty string.`);
+                }
+            } else {
+                console.error(`Manifest or index.js not found in ${path.join(pluginsPath, dir)}`);
+            }
+        }
+
+        return { status: 'success', plugins };
+    } catch (error) {
+        console.error('Error loading plugins:', error);
+        return { status: 'error', message: error.message };
+    }
+});
+
 
 
 function createFolderTree(basePath: string, structure: FolderStructure) 

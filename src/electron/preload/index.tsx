@@ -1,6 +1,6 @@
-﻿import { webFrame, contextBridge, ipcRenderer } from "electron/renderer";
-import { readFileSync } from "fs";
-import { join } from "path";
+﻿import {contextBridge, ipcRenderer, webFrame} from "electron/renderer";
+import {readFileSync} from "fs";
+import {join} from "path";
 import path from "node:path";
 import os from "os";
 import {MOD_NAME} from "../../consts";
@@ -17,7 +17,7 @@ void webFrame.executeJavaScript(readFileSync(join(__dirname, `renderer.min.js`),
 
 contextBridge.exposeInMainWorld("DistrustNative", 
 {
-    ipcRenderer: { get, set },
+    ipcRenderer: { get, set, loadPlugins },
     locations: 
     {
         plugins: pluginLocation,
@@ -35,4 +35,30 @@ function get(name: string)
 function set(name: any, data: any)
 {
     return ipcRenderer.invoke('writeSettings', { path: settingsLocation, name, data });
+}
+
+async function loadPlugins() {
+    try {
+        const result = await ipcRenderer.invoke('loadPlugins', { path: pluginLocation });
+        if (result.status === 'success') {
+            return result.plugins.map(plugin => {
+                const module: any = {};
+                const code = `(function(exports, require, module, __filename, __dirname) { ${plugin.fileContent} })(module.exports, require, module, __filename, __dirname);`;
+                eval(code);
+
+                if (module.exports && module.exports.start) {
+                    return {
+                        exports: module.exports,
+                        manifest: plugin.manifest
+                    };
+                }
+            }).filter((plugin: any) => plugin);
+        } else {
+            console.error('Failed to load plugins:', result.message);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error loading plugins:', error);
+        return [];
+    }
 }
