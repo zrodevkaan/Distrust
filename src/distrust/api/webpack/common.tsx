@@ -12,6 +12,7 @@ export const modules = {
         FormSwitch: null as any,
         MenuItem: null as any,
         Menu: null as any,
+        Switch: null as any, 
     },
     toast: null as unknown as (message: string, kind?: number, options?: Record<string, unknown>) => void,
 }
@@ -47,6 +48,10 @@ Promise.allSettled([
         {
             return <div className={module.sectionDivider} style={style} />;
         };
+    }),
+    
+    waitForModule(filters.bySource('xMinYMid meet')).then(module => {
+        modules.components.Switch = module.Switch;
     }),
     
     waitForModule(filters.byProps('FormSwitch')).then((module) =>
