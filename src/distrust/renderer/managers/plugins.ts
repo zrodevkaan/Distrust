@@ -42,7 +42,7 @@ export function getExports(id: string) {
 
 export function disable(id: string): boolean {
     const plugin = getExports(id);
-    if (!plugin) return false;
+    if (!plugin || !plugin.manifest.coreMod) return false;
     plugin.stop();
     coreLogger.info(`${plugin?.manifest?.name} was remotely disabled`);
     plugin.started = false;
