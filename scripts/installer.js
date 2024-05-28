@@ -144,6 +144,38 @@ userProfiles.forEach(profilePath => {
     }
 });
 
+const selectTargetPath = (selectedPath) => {
+    const indexPath = path.join(selectedPath, 'index.js');
+
+    fs.readFile(indexPath, 'utf8', (err, data) => {
+        if (err) {
+            Logger.red('Error reading index.js:', err);
+            rl.close();
+            return;
+        }
+
+        rl.question(`Are you sure you want to install it to "${selectedPath}"? (yes/no): `, (confirmation) => {
+            if (confirmation.toLowerCase() === 'yes' || confirmation.toLowerCase() === 'y') {
+                const modifiedContent = modifyIndexFile();
+                fs.writeFile(indexPath, modifiedContent, (err) => {
+                    if (err) {
+                        Logger.red('Error writing to index.js:', err);
+                        rl.close();
+                        return;
+                    }
+                    Logger.green('index.js modified successfully.');
+                    moveBuildFiles(selectedPath);
+                    rl.close();
+                });
+            } else {
+                Logger.green('Installation cancelled.');
+                rl.close();
+            }
+        });
+    });
+};
+
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -180,37 +212,6 @@ if (allTargetPaths.length > 1) {
     Logger.green(`Automatically selected target path: ${selectedPath}`);
     selectTargetPath(selectedPath);
 }
-
-const selectTargetPath = (selectedPath) => {
-    const indexPath = path.join(selectedPath, 'index.js');
-
-    fs.readFile(indexPath, 'utf8', (err, data) => {
-        if (err) {
-            Logger.red('Error reading index.js:', err);
-            rl.close();
-            return;
-        }
-
-        rl.question(`Are you sure you want to install it to "${selectedPath}"? (yes/no): `, (confirmation) => {
-            if (confirmation.toLowerCase() === 'yes' || confirmation.toLowerCase() === 'y') {
-                const modifiedContent = modifyIndexFile();
-                fs.writeFile(indexPath, modifiedContent, (err) => {
-                    if (err) {
-                        Logger.red('Error writing to index.js:', err);
-                        rl.close();
-                        return;
-                    }
-                    Logger.green('index.js modified successfully.');
-                    moveBuildFiles(selectedPath);
-                    rl.close();
-                });
-            } else {
-                Logger.green('Installation cancelled.');
-                rl.close();
-            }
-        });
-    });
-};
 
 function modifyIndexFile() {
     return `require(\`${distrustPath}\`);\nmodule.exports = require('./core.asar');`;
