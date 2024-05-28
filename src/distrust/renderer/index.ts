@@ -1,9 +1,23 @@
 ﻿import { plugins } from "./managers/plugins";
+import {generalSettings} from "../devConsts";
 
-export function startAll()
-{
-    plugins.forEach(plugins => plugins?.start?.());
+export async function startAll() {
+    try {
+        const disabledPluginsObject = await generalSettings.get('disabled');
+
+        const disabledPlugins = Object.keys(disabledPluginsObject);
+
+        plugins.forEach(plugin => {
+            if (!disabledPlugins.includes(plugin.manifest.name)) {
+                plugin.start && plugin.start();
+            }
+        });
+    } catch (error) {
+        console.error('Error starting plugins:', error);
+    }
 }
+
+
 
 export function stopAll()
 {

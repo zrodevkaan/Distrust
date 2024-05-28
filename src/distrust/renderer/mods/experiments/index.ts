@@ -5,7 +5,8 @@ export const manifest =
         name: 'Experiments',
         version: '1.0.0',
         description: 'Enables Developer Options/Experiments',
-        authors: ['Evie']
+        authors: ['Evie'],
+        coreMod: true
     }
 
 export function start()

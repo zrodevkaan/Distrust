@@ -25,14 +25,13 @@ window.distrust = new class Distrust
 Promise.allSettled([modules.waitForReady, common.waitForReady])
     .then(async () =>
     {
-       await loadCoremods()
-       startAll()
-       const pluginsArray: Mod[] = await window.DistrustNative.ipcRenderer.loadPlugins();
-       pluginsArray.forEach(plugin => {
-           plugin.exports.manifest = plugin.manifest;
-           plugins.push(plugin.exports) // I can't do this in preload/main. the `plugins` export takes it as different export.
-           // and im not smart enough to fix it. so I just did it here.
-       })
-       coreLogger.warn(plugins)
-       injectCSS('customCss',await generalSettings.get('customCss'))
+        await loadCoremods()
+        const pluginsArray: Mod[] = await window.DistrustNative.ipcRenderer.loadPlugins();
+        pluginsArray.forEach(plugin => {
+            plugin.exports.manifest = plugin.manifest;
+            plugins.push(plugin.exports) // I can't do this in preload/main. the `plugins` export takes it as different export.
+            // and im not smart enough to fix it. so I just did it here.
+        })
+        startAll()
+        injectCSS('customCss',await generalSettings.get('customCss'))
     })

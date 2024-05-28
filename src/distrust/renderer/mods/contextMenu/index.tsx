@@ -7,7 +7,8 @@ export const manifest =
         name: 'contextMenu',
         version: '1.0.0',
         description: 'Allows people to add items to the ContextMenu component.',
-        authors: ['kaan']
+        authors: ['kaan'],
+        coreMod: true
     }
 
 export interface ContextMenuData {

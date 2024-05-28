@@ -1,4 +1,5 @@
 ﻿import {coreLogger, generalSettings} from "../../devConsts";
+import {startAll} from "../index";
 export const plugins: Mod[] = [];
 export const pluginPlaintexts: any[] = [
     require('../mods/experiments/patches'),
@@ -29,6 +30,7 @@ export interface Mod {
         authors: string[];
         description: string;
         version: string;
+        coreMod?: boolean
     };
     [x: string]: any;
 }

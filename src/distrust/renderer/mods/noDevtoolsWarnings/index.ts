@@ -7,7 +7,8 @@ export const manifest =
         name: 'NoDevToolsWarnings',
         version: '1.0.0',
         description: 'Removes DevTools warnings and prevents you from getting logged out when closing Discord with DevTools enabled.',
-        authors: ['Evie']
+        authors: ['Evie'],
+        coreMod: true
     }
 
 export const start = (): void => {

@@ -25,7 +25,8 @@ export const manifest =
         name: 'Recovery',
         version: '1.0.0',
         description: 'Allows people to recover their discord if it crashes',
-        authors: ['kaan']
+        authors: ['kaan'],
+        coreMod: true
     }
 
 interface ErrorComponentState {
