@@ -46,7 +46,6 @@ export function disable(id: string): boolean {
     plugin.stop();
     coreLogger.info(`${plugin?.manifest?.name} was remotely disabled`);
     plugin.started = false;
-    // Update the generalSettings disabled list
     const disabledPlugins = generalSettings.get('disabled') || {};
     disabledPlugins[plugin?.manifest?.name] = true;
     generalSettings.set('disabled', disabledPlugins);
@@ -58,7 +57,6 @@ export function enable(id: string): boolean {
     if (!plugin || !plugin.start) return false;
     plugin.start();
     coreLogger.info(`${plugin.manifest.name} was remotely enabled`);
-    // Update the generalSettings disabled list
     plugin.started = false;
     const disabledPlugins = generalSettings.get('disabled') || {};
     delete disabledPlugins[plugin.manifest.name]

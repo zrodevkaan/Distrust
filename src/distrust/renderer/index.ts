@@ -3,7 +3,7 @@ import {generalSettings} from "../devConsts";
 
 export async function startAll() {
     try {
-        const disabledPluginsObject = await generalSettings.get('disabled');
+        const disabledPluginsObject = await generalSettings.get('disabled') || {};
 
         const disabledPlugins = Object.keys(disabledPluginsObject);
 
