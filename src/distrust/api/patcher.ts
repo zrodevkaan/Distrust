@@ -73,7 +73,7 @@ export class Patcher
         targetObject[methodName] = function ()
         {
             const result = originalMethod.apply(this, arguments);
-            afterCallback.call(this, this, result, arguments);
+            afterCallback.call(this, this, result, [...arguments]);
             return result;
         };
 

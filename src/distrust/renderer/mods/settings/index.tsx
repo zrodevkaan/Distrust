@@ -112,7 +112,7 @@ export const start = async () =>
 
     injector.after(settingsPage?.prototype,'getPredicateSections', (args,b,c) =>
     {
-        b.unshift({ariaLabel: 'uwu', section: "client-mod-page", label: 'Distrust', element: () => <div> <TabBar tabs={tabs}/> </div>, icon: modules.react.createElement(DistrustIcon)})
+        b.unshift({ariaLabel: 'uwu', section: "client-mod-page", label: 'Distrust', element: () => <div> <TabBar tabs={tabs}/> </div>, icon: DistrustIcon()})
     });
 
     settingsLogger.info("Starting setting plugin");
