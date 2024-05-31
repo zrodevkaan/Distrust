@@ -3,31 +3,22 @@ import { webpack, common } from "../../../api/webpack";
 import { Patcher } from "../../../api/patcher";
 import { findInTree, proxyCache } from "../../../api/helpers";
 import { injectCSS, uninjectCSS } from "../../../api/css";
-import {waitForModule} from "../../../api/webpack/getters";
+import { waitForModule } from "../../../api/webpack/getters";
 // import './styles.css' will implement later
+
+const logger = new Logger("recovery");
+const injector = new Patcher('recovery');
 
 const Flux = common.modules.flux;
 
 // const URL_REGEX_FIND = /https:\/\/\S+/g;
 const PLUGIN_ID_FIND_REGEX = /plugin\/(.*?)\.asar/;
 const FIND_ERROR_NUMBER = /invariant=(\d+)&/;
+
 const ReactErrorList =
     "https://raw.githubusercontent.com/facebook/react/v18.2.0/scripts/error-codes/codes.json";
 const ReactErrorListFallback =
     "https://raw.githubusercontent.com/facebook/react/v17.0.0/scripts/error-codes/codes.json";
-const logger = new Logger("recovery");
-let ReactErrors: Record<string, string> | undefined;
-const injector = new Patcher('recovery')
-let ModalsModule = webpack.getKeys('ConfirmModal')
-
-export const manifest =
-    {
-        name: 'Recovery',
-        version: '1.0.0',
-        description: 'Allows people to recover their discord if it crashes',
-        authors: ['kaan'],
-        coreMod: true
-    }
 
 interface ErrorComponentState {
     error: {
@@ -36,11 +27,13 @@ interface ErrorComponentState {
     } | null;
     info: null;
 }
+
 interface ErrorScreenClass {
     prototype: {
         render: any;
     };
 }
+
 interface ErrorScreenInstance {
     state?: ErrorComponentState;
     setState: (state: ErrorComponentState) => void;
@@ -54,81 +47,104 @@ interface RouteInstance {
     transitionTo: (location: string) => void;
 }
 
-const ModalModule = webpack.getKeys<Modals>("openModalLazy")
-const RouteModule = webpack.getKeys<RouteInstance>("transitionTo")
+interface TreeNode {
+    children: React.ReactElement[];
+}
 
-function startMainRecovery(): void {
+let ReactErrors: Record<string, string> | undefined;
+const ModalsModule = webpack.getKeys('ConfirmModal');
+const ModalModule = webpack.getKeys<Modals>("openModalLazy");
+const RouteModule = webpack.getKeys<RouteInstance>("transitionTo");
+
+const startMainRecovery = (): void =>
+{
     const log = (reason: string): void => logger.info(reason),
         err = (reason: string): void => logger.error(reason);
+
     log("Starting main recovery methods.");
-    if (!ModalModule) {
+
+    if (!ModalModule)
+    {
         err("Could not find `openModalLazy` Module.");
         return;
     }
 
-    try {
+    try
+    {
         // I think trying to transition first is a better move.
         // Considering most errors come from patching.
         RouteModule?.transitionTo("/channels/@me");
-    } catch {
+    }
+    catch
+    {
         err("Failed to transition to '/channels/@me'.");
     }
 
-    try {
+    try
+    {
         Flux.dispatch({ type: "CONTEXT_MENU_CLOSE" });
-    } catch {
+    }
+    catch
+    {
         err("ContextMenu's could not be closed.");
     }
 
-    try {
+    try
+    {
         ModalModule.closeAllModals();
-    } catch {
+    }
+    catch
+    {
         err("Could not close (most) modals.");
     }
 
     log("Ended main recovery.");
-}
-interface TreeNode {
-    children: React.ReactElement[];
-}
-export async function start(): Promise<void> {
-    let parser = webpack.getModule(x => x?.exports?.default?.parse)?.default
-    injectCSS('recovery',
-    `[class*=errorPage] [class*=buttons_] {
-      flex-direction: column;
-      align-items: center;
-    }
-    [class*=errorPage] [class*=buttons_] [class*=button__] {
-      width: 400px;
-      margin: 5px;
-    }
-    .distrust-recovery-button {
-      width: var(--custom-button-button-lg-width);
-      height: var(--custom-button-button-lg-height);
-      min-width: var(--custom-button-button-lg-width);
-      min-height: var(--custom-button-button-lg-height);
-      background-color: var(--button-danger-background) !important;
-    }
-    [class*=errorPage] [class*=scrollbarGhostHairline] {
-      white-space: break-spaces;
-      width: 80vw;
-      text-align: center;
-    }`
+};
+
+export const start = async (): Promise<void> =>
+{
+    const parser = webpack.getModule(x => x?.exports?.default?.parse)?.default;
+
+    injectCSS(
+        'recovery',
+        `[class*=errorPage] [class*=buttons_] {
+        flex-direction: column;
+        align-items: center;
+        }
+        [class*=errorPage] [class*=buttons_] [class*=button__] {
+        width: 400px;
+        margin: 5px;
+        }
+        .distrust-recovery-button {
+        width: var(--custom-button-button-lg-width);
+        height: var(--custom-button-button-lg-height);
+        min-width: var(--custom-button-button-lg-width);
+        min-height: var(--custom-button-button-lg-height);
+        background-color: var(--button-danger-background) !important;
+        }
+        [class*=errorPage] [class*=scrollbarGhostHairline] {
+        white-space: break-spaces;
+        width: 80vw;
+        text-align: center;
+        }`
     );
 
-    const ErrorScreen = await waitForModule((x: any) =>
-        x?.exports?.default?.toString()?.includes('.AnalyticEvents.APP_CRASHED')
-    ).then((module: any) => module?.default);
+    const ErrorScreen = await waitForModule(
+        (x: any) => x?.exports?.default?.toString()?.includes('.AnalyticEvents.APP_CRASHED'),
+    )
+        .then((module: any) => module?.default);
 
     void startErrors();
 
     injector.after(
         ErrorScreen.prototype,
         'render',
-        (instance: ErrorScreenInstance, res: React.ReactElement) => {
+        (instance: ErrorScreenInstance, res: React.ReactElement) =>
+        {
             if (!instance.state?.error) return;
 
             const treeNode = findInTree(res, (x: any) => Boolean(x?.action))?.action as { props: TreeNode };
+
             if (!treeNode) return;
 
             const { props: { children } } = treeNode;
@@ -167,19 +183,23 @@ export async function start(): Promise<void> {
     );
 }
 
-export function stop(): void {
+export const stop = (): void =>
+{
     injector.unpatchAll();
-    uninjectCSS('recovery')
+    uninjectCSS('recovery');
 }
 
-export async function startErrors(): Promise<void> {
+export const startErrors = async (): Promise<void> =>
+{
     ReactErrors = await fetch(ReactErrorList)
         .then((response) => response.json())
-        .catch(async (error) => {
+        .catch(async (error) =>
+        {
             logger.error("ReactErrorList Fail:", error);
             return await fetch(ReactErrorListFallback).then((response) => response.json());
         })
-        .catch((error) => {
+        .catch((error) =>
+        {
             logger.error("ReactErrorListFallback Fail:", error, "\nFalling back to {}");
             return {};
         });

@@ -1,9 +1,10 @@
 import { filters, getModule, waitForModule } from "./getters";
+import type React from 'react';
 import { WebpackModule } from "./modules";
 
 export const modules = {
     flux: null as any,
-    react: null as any,
+    react: null as unknown as typeof React,
     components:
     {
         Divider: null as any,
@@ -12,7 +13,7 @@ export const modules = {
         FormSwitch: null as any,
         MenuItem: null as any,
         Menu: null as any,
-        Switch: null as any, 
+        Switch: null as any,
     },
     toast: null as unknown as (message: string, kind?: number, options?: Record<string, unknown>) => void,
 }
@@ -49,11 +50,11 @@ Promise.allSettled([
             return <div className={module.sectionDivider} style={style} />;
         };
     }),
-    
+
     waitForModule(filters.bySource('xMinYMid meet')).then(module => {
         modules.components.Switch = module.Switch;
     }),
-    
+
     waitForModule(filters.byProps('FormSwitch')).then((module) =>
     {
         modules.components.FormSwitch = module;
@@ -68,7 +69,7 @@ Promise.allSettled([
     {
         modules.components.Menu = module.Menu;
     }),
-    
+
     waitForModule(filters.byProps('text-xs/normal')).then((module) =>
     {
         modules.components.TextClasses = module;

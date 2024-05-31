@@ -1,5 +1,5 @@
 import { coreLogger, generalSettings } from "../../devConsts";
-import {injectCSS, uninjectCSS} from "../../api/css";
+import { injectCSS, uninjectCSS } from "../../api/css";
 
 export interface Theme {
     manifest: {
@@ -8,55 +8,150 @@ export interface Theme {
         description: string;
         version: string;
     };
-    cssContent: string,
-    [x: string]: any;
+    source: string,
     started: boolean;
 }
 
 export const themes: Theme[] = [];
 
-export async function startAllThemes() {
-    try {
-        const disabledThemesObject = await generalSettings.get('disabledThemes') || {};
-        const disabledThemes = Object.keys(disabledThemesObject);
+export const getTheme = (id: string) =>
+    themes.find((theme) => theme?.manifest?.name.toLowerCase() === id.toLowerCase());
 
-        themes.forEach(theme => {
-            if (!disabledThemes.includes(theme.manifest.name)) {
-                injectCSS(theme.manifest.name, theme.cssContent);
-                theme.started = true;
-            }
-        });
-        
-    } catch (error) {
-        console.error('Error starting themes:', error);
+export const getSource = (id: string) =>
+    getTheme(id)?.source;
+
+export const stop = (id: string): void =>
+{
+    const theme = getTheme(id);
+
+    if (!theme)
+        throw new Error(`"${id}" was not found`);
+
+    if (!theme.started)
+        throw new Error(`"${id}" has already stopped`);
+
+    try
+    {
+        uninjectCSS(id);
+
+        theme.started = false;
+
+        coreLogger.info(`Stopped theme "${id}"`);
     }
-}
+    catch (e)
+    {
+        coreLogger.info(`Failed to stop theme "${id}"\n\n`, e);
+    }
+};
 
+export const start = (id: string): void =>
+{
+    const theme = getTheme(id);
 
-export function getExports(id: string): Theme {
-    return <Theme>themes.find(theme => theme?.manifest?.name.toLowerCase() === id.toLowerCase());
-}
+    if (!theme)
+        throw new Error(`"${id}" was not found`);
 
-export function disable(id: string): boolean {
-    const theme = getExports(id);
+    if (theme.started)
+        throw new Error(`"${id}" has already started`);
+
+    try
+    {
+        injectCSS(id, theme.source);
+
+        theme.started = true;
+
+        coreLogger.info(`Started theme "${id}"`);
+    }
+    catch (e)
+    {
+        coreLogger.info(`Failed to start theme "${id}", stopping it now\n\n`, e);
+
+        theme.started = false;
+
+        stop(id);
+    }
+};
+
+export const disable = async (id: string): Promise<boolean> =>
+{
+    const theme = getTheme(id);
+
     if (!theme) return false;
-    uninjectCSS(id)
-    coreLogger.info(`${theme?.manifest?.name} was remotely disabled`);
-    theme.started = false;
-    const disabledThemes = generalSettings.get('disabled') || {};
-    disabledThemes[theme?.manifest?.name] = true;
-    generalSettings.set('disabledThemes', disabledThemes);
+
+    if (theme.started) {
+        try
+        {
+            stop(id);
+        }
+        catch (e)
+        {
+            coreLogger.warn(`Failed to stop theme "${id}" while disabling it\n\n`, e);
+        }
+    }
+
+    const disabledThemes = (await generalSettings.get('disabled') || {}) as unknown as Record<string, boolean>;
+
+    disabledThemes[id] = true;
+
+    generalSettings.set('disabled', disabledThemes);
+
+    coreLogger.info(`Disabled theme "${id}"`);
+
     return true;
 }
 
-export function enable(id: string): boolean {
-    const theme = getExports(id);
+export const enable = async (id: string): Promise<boolean> =>
+{
+    const theme = getTheme(id);
+
     if (!theme) return false;
-    injectCSS(id, theme.cssContent)
-    coreLogger.info(`${theme.manifest.name} was remotely enabled`);
-    theme.started = true;
-    const disabledThemes = generalSettings.get('disabled') || {};
-    delete disabledThemes[theme.manifest.name];
-    generalSettings.set('disabledThemes', disabledThemes);
+
+    if (!theme.started) {
+        try
+        {
+            start(id);
+        }
+        catch (e)
+        {
+            coreLogger.warn(`Failed to start theme "${id}" while enabling it\n\n`, e);
+        }
+    }
+
+    const disabledThemes = (await generalSettings.get('disabled') || {}) as unknown as Record<string, boolean>;
+
+    delete disabledThemes[id];
+
+    generalSettings.set('disabled', disabledThemes);
+
+    coreLogger.info(`Enabled theme "${id}"`);
+
     return true;
 }
+
+export const startAll = async (): Promise<void> =>
+{
+    const disabled = Object.keys(await generalSettings.get('disabled') || {});
+
+    themes
+        .filter((theme) =>
+            theme && !disabled.includes(theme.manifest?.name)
+        )
+        .forEach((theme) =>
+        {
+            try
+            {
+                start(theme.manifest.name);
+            }
+            catch (e) {}
+        });
+};
+
+export const stopAll = (): void =>
+    themes.forEach((theme) =>
+    {
+        try
+        {
+            stop(theme.manifest.name);
+        }
+        catch (e) {}
+    });

@@ -1,31 +1,39 @@
-﻿import {coreLogger} from "../../devConsts";
+﻿import { coreLogger } from "../../devConsts";
 
-class DataHandler 
+class DataHandler
 {
     private readonly fileName: string;
     private id: any;
-    constructor(id: any) 
+
+    constructor(id: any)
     {
         this.id = id;
         this.fileName = `${id}.json`;
     }
 
-    get = async (key: string): Promise<any> => 
+    get = async (key: string): Promise<any> =>
     {
-        try 
+        try
         {
-            const fileContent = await window.DistrustNative.ipcRenderer.get(this.fileName);
+            const fileContent = await window.DistrustNative.settings.get(this.fileName);
             const jsonData = JSON.parse(fileContent);
+
             return jsonData[key];
-        } catch (error) {
+        }
+        catch (error)
+        {
             coreLogger.error(`Error getting key ${key} from file ${this.fileName}:`, error);
-            try 
+
+            try
             {
-                await window.DistrustNative.ipcRenderer.set(this.fileName, JSON.stringify({}, null, 2));
-                const fileContent = await window.DistrustNative.ipcRenderer.get(this.fileName);
+                await window.DistrustNative.settings.set(this.fileName, JSON.stringify({}, null, 2));
+
+                const fileContent = await window.DistrustNative.settings.get(this.fileName);
                 const jsonData = JSON.parse(fileContent);
+
                 return jsonData[key];
-            } catch (creationError) 
+            }
+            catch (creationError)
             {
                 coreLogger.error(`Error creating file ${this.fileName}:`, creationError);
                 return null;
@@ -34,19 +42,28 @@ class DataHandler
     };
 
 
-    set = async (key: string, value: any): Promise<void> => {
-        try {
-            let fileContent: string;
-            try {
-                fileContent = await window.DistrustNative.ipcRenderer.get(this.fileName);
-                fileContent = JSON.parse(fileContent);
-            } catch (error) {
-              fileContent = JSON.parse("{}");
+    set = async (key: string, value: any): Promise<void> =>
+    {
+        try
+        {
+            let fileContent: Record<string, unknown>;
+
+            try
+            {
+                fileContent = JSON.parse(await window.DistrustNative.settings.get(this.fileName));
             }
+            catch (error)
+            {
+              fileContent = {};
+            }
+
             fileContent[key] = value;
-            await window.DistrustNative.ipcRenderer.set(this.fileName, JSON.stringify(fileContent));
-        } catch (error) {
-            console.error(`Error setting key ${key} to value ${value} in file ${this.fileName}:`, error);
+
+            await window.DistrustNative.settings.set(this.fileName, JSON.stringify(fileContent));
+        }
+        catch (error)
+        {
+            coreLogger.error(`Error setting key ${key} to value ${value} in file ${this.fileName}:`, error);
         }
     };
 }
