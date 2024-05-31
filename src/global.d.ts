@@ -7,10 +7,14 @@ declare global {
         distrust: any;
         ace: any;
         DistrustNative: {
-            ipcRenderer: {
-                set: (name: string, data: any) => Promise<string>;
-                get: (key: string) => Promise<void>;
-                loadPlugins: () => Promise<Mod[]>;
+            settings: {
+                set: (name: string, data: any) => Promise<
+                    { success: true, logger: string } | { error: string }
+                >;
+                get: (key: string) => Promise<string>;
+            };
+            addons: {
+                loadPlugins: () => Promise<Array<{ source: string, manifest: Mod['manifest'] }>>;
                 loadThemes: () => Promise<Theme[]>;
             };
             locations: {

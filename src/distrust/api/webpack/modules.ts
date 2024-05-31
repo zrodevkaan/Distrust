@@ -108,7 +108,7 @@ const patchPlaintext = (modules: WebpackChunk[1], id: string | number, module: W
     {
         newMod = hasPatches
             ? eval(
-                `// PatchedSource ${id}\n\n(${sources[id]})\n//# sourceURL=distrust://webpack/${id}`
+                `// PatchedSource ${id}\n\n(${sources[id]})\n//# sourceURL=distrust://distrust/webpack/${id}`
             )
             : module;
     }

@@ -1,0 +1,6 @@
+{
+    "name": "contextMenu",
+    "version": "1.0.0",
+    "description": "Allows people to add items to the ContextMenu component.",
+    "authors": ["kaan"]
+}

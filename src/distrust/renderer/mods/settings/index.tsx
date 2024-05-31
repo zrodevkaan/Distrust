@@ -17,15 +17,6 @@ const { TextClasses } = common.modules.components;
 const settingsLogger = new Logger('Settings')
 const injector = new Patcher('settings')
 
-export const manifest =
-    {
-        name: 'Settings',
-        version: '1.0.0',
-        description: 'settings plugin coremod :3',
-        authors: ['kaan'],
-        coreMod: true
-    }
-
 const tabs = [
     {
         id: 1,
@@ -33,7 +24,7 @@ const tabs = [
         element: () => (
             <div>
                 {plugins.map(plugin => (
-                    !plugin.manifest.coreMod && <PluginCard key={plugin.id} plugin={plugin}/>
+                    !plugin.coremod && <PluginCard key={plugin.id} plugin={plugin}/>
                 ))}
             </div>
         )
@@ -64,7 +55,8 @@ const tabs = [
 export default tabs;
 
 
-export async function start() {
+export const start = async () =>
+{
     injectCSS('settings', `
     .editor-container {
       width: 900px;
@@ -72,7 +64,7 @@ export async function start() {
       margin: 20px auto;
       position: relative;
     }
-    
+
     #editor {
       position: absolute;
       left: 0;
@@ -114,15 +106,20 @@ export async function start() {
     .info {
       display: flex;
     }
-    h3, p {color: var(--header-primary); margin: 0;}`)
-    const settingsPage = await webpack.waitForModule(x=>x?.exports?.default?.prototype?.renderSidebar).then((module) => module?.default)
-    injector.after(settingsPage?.prototype,'getPredicateSections', (args,b,c) => {
-        b.unshift({ariaLabel: 'uwu', section: "client-mod-page", label: 'Distrust', element: () => <div> <TabBar tabs={tabs}/> </div>, icon: modules.react.createElement(DistrustIcon)})
-    })
-    settingsLogger.info("Starting setting plugin")
-}
+    h3, p {color: var(--header-primary); margin: 0;}`);
 
-export function VersionInfo(): React.ReactElement {
+    const settingsPage = await webpack.waitForModule(x=>x?.exports?.default?.prototype?.renderSidebar).then((module) => module?.default)
+
+    injector.after(settingsPage?.prototype,'getPredicateSections', (args,b,c) =>
+    {
+        b.unshift({ariaLabel: 'uwu', section: "client-mod-page", label: 'Distrust', element: () => <div> <TabBar tabs={tabs}/> </div>, icon: modules.react.createElement(DistrustIcon)})
+    });
+
+    settingsLogger.info("Starting setting plugin");
+};
+
+export const VersionInfo = (): React.ReactElement =>
+{
     return (
         <span className={TextClasses['text-xs/normal']} style={{ color: 'var(--text-muted)' }}>
             distrust ({MOD_VERSION})
@@ -130,8 +127,8 @@ export function VersionInfo(): React.ReactElement {
     );
 }
 
-export function stop()
+export const stop = () =>
 {
-    uninjectCSS('settings')
-    settingsLogger.info("Stopping setting plugin")
+    uninjectCSS('settings');
+    settingsLogger.info("Stopping setting plugin");
 }

@@ -1,26 +1,22 @@
 ﻿import { common } from "../../../../api/webpack";
 import { Mod } from "../../../managers/plugins";
-import { enable, disable, getExports } from "../../../managers/plugins";
-import { Components } from "discord-types";
+import { enable, disable, getPlugin } from "../../../managers/plugins";
 
 const { react: React, components: { Switch } } = common.modules;
 
-export const PluginCard = ({ plugin }: Mod) => {
+export const PluginCard = ({ plugin }: { plugin: Mod }) => {
     const [isToggled, setIsToggled] = React.useState(false);
 
-    React.useEffect(() => {
-        const isEnabled = getExports(plugin.manifest.name)?.started;
-        setIsToggled(!!isEnabled);
-    }, [plugin]);
+    React.useEffect(() =>
+        {
+            setIsToggled(Boolean(getPlugin(plugin.manifest.name)?.started));
+        },
+        [plugin],
+    );
 
-    const handleToggle = () => {
-        if (isToggled) {
-            disable(plugin.manifest.name);
-        } else {
-            enable(plugin.manifest.name);
-        }
-        setIsToggled(!isToggled);
-    };
+    const handleToggle = () =>
+        (isToggled ? disable(plugin.manifest.name) : enable(plugin.manifest.name))
+            .then(() => setIsToggled(!isToggled));
 
     return (
         <div style={{ marginBottom: '10px' }}>

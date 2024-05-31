@@ -4,8 +4,9 @@ import AdmZip from 'adm-zip';
 import { session } from 'electron';
 import os from 'os';
 import { MOD_NAME } from '../../../consts';
+import { BASE_DIR } from '../../consts';
 
-export const ReactDevToolsPath = path.join(os.homedir(), 'AppData', 'Roaming', MOD_NAME, 'fmkadmapgofadopljbjfkapdkoienihi');
+export const ReactDevToolsPath = path.join(BASE_DIR, MOD_NAME, 'fmkadmapgofadopljbjfkapdkoienihi');
 const ReactDevToolsZip = path.join(ReactDevToolsPath, 'react-devtools.zip');
 const ReactDevTools = 'https://replugged.dev/api/v1/react-devtools';
 
