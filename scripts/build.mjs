@@ -32,6 +32,6 @@ await Promise.all([
     logLevel: 'info',
     outfile: 'build/renderer.min.js',
     platform: 'browser',
-    format: 'iife',
+    format: 'esm',
   }),
 ])

@@ -4,7 +4,7 @@ import { webpack, modules, common } from "./api/webpack";
 import { pluginsManager, themesManager } from "./renderer";
 import * as css from "./api/css";
 import { DataHandler } from "./renderer/managers/storage";
-import { generalSettings } from "./devConsts";
+import { coreLogger, generalSettings } from "./devConsts";
 import * as contextMenu from "./renderer/mods/contextMenu";
 
 // @ts-ignore
@@ -41,9 +41,16 @@ Promise.allSettled([modules.waitForReady, common.waitForReady])
                         ),
                     );
 
-                    const plugin = await import(importUrl);
+                    try
+                    {
+                      const plugin = await import(importUrl);
 
-                    pluginsManager.plugins.push({ exports: plugin, manifest });
+                      pluginsManager.plugins.push({ exports: plugin, manifest });
+                    }
+                    catch (e)
+                    {
+                      coreLogger.warn(`failed to load "${manifest.name}"; it will be ignored\n\n`, e);
+                    }                    
                 }))
             )
             .then(() => pluginsManager.startAll());
