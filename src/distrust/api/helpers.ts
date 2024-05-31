@@ -191,3 +191,5 @@ export function proxyCache<T extends object>(factory: () => T, typeofIsObject: b
         ) as T, handlers
     );
 }
+
+export const getPropValue = (variableName: string): string => getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();

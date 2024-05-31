@@ -153,6 +153,21 @@ wpChunk.push([
             }
         })
 
+        r.d = (target: object, exports: object) => {
+            for (const key in exports) {
+                if (!Reflect.has(exports, key)) continue;
+
+                Object.defineProperty(target, key, {
+                    get() { // @ts-ignore
+                        return exports[key]() },
+                    set(v) { // @ts-ignore
+                        exports[key] = () => v; },
+                    enumerable: true,
+                    configurable: true
+                });
+            }
+        };
+
         _ready();
     }
 ])

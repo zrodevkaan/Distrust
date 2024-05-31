@@ -6,6 +6,7 @@ import * as css from "./api/css";
 import { DataHandler } from "./renderer/managers/storage";
 import { coreLogger, generalSettings } from "./devConsts";
 import * as contextMenu from "./renderer/mods/contextMenu";
+import {getPropValue} from "./api/helpers";
 
 // @ts-ignore
 window.distrust = new class Distrust
@@ -21,6 +22,7 @@ window.distrust = new class Distrust
     );
     themes = themesManager;
     css = css;
+    helpers = {getPropValue}
     storage = DataHandler;
     contextMenu = contextMenu;
 }
