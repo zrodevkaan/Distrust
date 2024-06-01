@@ -67,8 +67,7 @@ export function generateInterface<T>(
     currentDepth: number = 0,
     visited = new Set<any>(),
     isTopLevel = true,
-): string
-{
+): string {
     if (data === null || (visited.has(data) || currentDepth >= maxDepth))
         return "";
 
@@ -79,37 +78,36 @@ export function generateInterface<T>(
     let interfaceString = "";
 
     keys.forEach((key) => {
-        if (key.includes("-"))
-        {
+        if (key.includes("-")) {
             const parts = key.split("-");
             parts[1] = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
             key = parts.join("");
         }
 
         const value = data[key];
-
         let valueType: string = typeof value;
 
         if (valueType === "function") valueType = "() => unknown";
 
-        if (value === undefined || value === null)
-            interfaceString += `  ${key}: NonNullable<unknown>;\n`;
-        else if (valueType === "object" && !Array.isArray(value))
-        {
-            interfaceString += `  ${key}: {\n`;
+        // average discord module.
+        const formattedKey = key.includes("/") ? `"${key}"` : key;
+
+        if (value === undefined || value === null) {
+            interfaceString += `  ${formattedKey}: NonNullable<unknown>;\n`;
+        } else if (valueType === "object" && !Array.isArray(value)) {
+            interfaceString += `  ${formattedKey}: {\n`;
             const nestedInterface = generateInterface(value, maxDepth, currentDepth + 1, visited, false);
             interfaceString += nestedInterface;
-            interfaceString += "};\n";
-        }
-        else if (Array.isArray(value))
-        {
-            interfaceString += `  ${key}: Array<{\n`;
+            interfaceString += "  };\n";
+        } else if (Array.isArray(value)) {
+            interfaceString += `  ${formattedKey}: Array<{\n`;
             const nestedInterface = generateInterface(value, maxDepth, currentDepth + 1, visited, false);
             interfaceString += nestedInterface;
-            interfaceString += "}>;\n";
+            interfaceString += "  }>;\n";
+        } else {
+            const formattedValue = (typeof value === 'string' && value.includes("/")) ? `"${value}"` : valueType;
+            interfaceString += `  ${formattedKey}: ${formattedValue};\n`;
         }
-        else
-            interfaceString += `  ${key}: ${valueType};\n`;
     });
 
     const proto = Object.getPrototypeOf(data || {});
@@ -121,6 +119,7 @@ export function generateInterface<T>(
 
     return interfaceString;
 }
+
 
 export function cache<T>(factory: () => T): () => T
 {
