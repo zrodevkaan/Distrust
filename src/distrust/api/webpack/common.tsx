@@ -1,6 +1,5 @@
-import { filters, getModule, waitForModule } from "./getters";
+import {filters, getKeys, waitForModule} from "./getters";
 import type React from 'react';
-import { WebpackModule } from "./modules";
 
 export const modules = {
     flux: null as any,
@@ -41,7 +40,7 @@ Promise.allSettled([
     {
         modules.react = module;
     }),
-
+    
     waitForModule(filters.byProps('sectionDivider')).then((module) =>
     {
         modules.components.DividerClasses = module;
