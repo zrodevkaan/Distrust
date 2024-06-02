@@ -65,6 +65,11 @@ export const start = async () =>
       position: relative;
     }
 
+    .small-text {
+        color: var(--header-secondary);
+        font-size: 12px;
+    }
+
     #editor {
       position: absolute;
       left: 0;
@@ -97,16 +102,58 @@ export const start = async () =>
     .channelTabBarItem.selected {
       background-color: transparent;
     }
+
     .card {
       background-color: var(--background-secondary);
       padding: 9px;
       margin: 3px;
       border-radius: 9px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
+
+    .topper {
+      background-color: var(--background-secondary-alt);
+      padding: 9px;
+      display: flex;
+      align-items: center;
+      border-top-left-radius: 9px;
+      border-top-right-radius: 9px;
+      width: 100%;
+    }
+
+    .info-topper {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-left: 10px;
+    }
+
     .info {
       display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+      margin-top: 10px;
     }
-    h3, p {color: var(--header-primary); margin: 0;}`);
+
+    h3, p {
+      color: var(--header-primary);
+      margin: 0;
+    }
+
+    .plugin-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 5px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 5px;
+    }
+`);
 
     const settingsPage = await webpack.waitForModule(x=>x?.exports?.default?.prototype?.renderSidebar).then((module) => module?.default)
 
