@@ -26,19 +26,8 @@ const CustomCSSEditor = () =>
                 script.onload = async () =>
                 {
                     const editor = window.ace.edit("editor");
-                    editor.setOptions({
-                        // maxLines: Infinity,  // this is going to be very slow on large documents
-                        useWrapMode: true,
-                        indentedSoftWrap: true,
-                        behavioursEnabled: true,
-                        enableBasicAutocompletion: true,
-                        enableSnippets: true,
-                        enableLiveAutocompletion: false
-                        // showLineNumbers: false, // hide the gutter
-                        // theme: "ace/theme/xcode"
-                    });
 
-                    editor.setTheme("ace/theme/cobalt");
+                    editor.setTheme("ace/theme/pastel_on_dark");
                     editor.session.setMode("ace/mode/css");
 
                     const savedCss = await generalSettings.get('customCss');
