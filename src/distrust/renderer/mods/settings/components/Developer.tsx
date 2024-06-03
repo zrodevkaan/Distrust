@@ -22,9 +22,9 @@ export const DeveloperMenu = () => {
 
     return (
         <>
-            <Header className={'warning-css'}>
+            <span className={'warning-css'}>
                 I should probably warn you that modifying any CSS below and mess up your settings and editor settings. So please don't modify any css below if you DON'T know what you are doing
-            </Header>
+            </span>
             <CustomCSSEditor settingName={'settings'} onUpdateCSS={handleUpdateCSS} startingValue={getInnerCSS('settings')} />
         </>
     );

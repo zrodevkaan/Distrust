@@ -92,9 +92,11 @@ export const start = async () =>
       font-size: 20px;
     }
 
-    .warning-css
-    {
-        color: red;
+    .warning-css  {
+      display: block;
+      color: red;
+      text-align: center;
+      font-size: 20px;
     }
 
     .channelTabBarItem {
