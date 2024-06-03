@@ -16,18 +16,17 @@ export const PluginCard = ({ plugin }: { plugin: Mod }) => {
             .then(() => setIsToggled(!isToggled));
 
     return (
-        <div style={{ marginBottom: '10px' }}>
-            <div className="card" style={{ cursor: 'pointer' }}>
-                <div className="topper">
-                    <div className="info-topper">
-                        <h3><strong>{plugin.manifest.name}</strong></h3>
-                        <span className="small-text">{plugin.manifest.authors.join(", ")}</span>
-                        <span className="small-text">v{plugin.manifest.version}</span>
-                        <Switch checked={isToggled} onChange={handleToggle}/>
+
+                <div style={{ marginBottom: '10px' }}>
+                <div className="card" style={{ cursor: 'pointer' }}>
+                    <div className="topper">
+                            <h3><strong>{plugin.manifest.name}</strong></h3>
+                            <span className="small-text">Author: {plugin.manifest.authors.join(", ")}</span>
+                            <span className="small-text">v{plugin.manifest.version}</span>
+                            <Switch className="distrust-switch" checked={isToggled} onChange={handleToggle}/>
                     </div>
+                    <p className="description">{plugin.manifest.description}</p>
                 </div>
-                <p>{plugin.manifest.description}</p>
             </div>
-        </div>
     );
 };
