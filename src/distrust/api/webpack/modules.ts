@@ -1,5 +1,5 @@
 import { WebpackInstance } from "discord-types/other";
-import {externalPatches, pluginPlaintexts} from '../../renderer/managers/plugins';
+import { plaintextPatches } from '../../renderer/managers/plugins';
 import { coreLogger } from "../../devConsts";
 
 export interface WebpackModule extends Omit<Parameters<WebpackInstance['m']>[0], 'id'>
@@ -21,18 +21,6 @@ interface WebpackInstanceModules
 {
     (e: WebpackModule, exports: Record<string, unknown>, wpRequire: WebpackInstance): void
     [key: string | number]: WebpackChunk[1][keyof WebpackChunk[1]]
-}
-
-export interface PlaintextPatch
-{
-    find: string | RegExp;
-    replacements: Array<
-        {
-            match: string | RegExp,
-            replace: string,
-        }
-        | ((source: string) => string)
-    >
 }
 
 declare global
@@ -64,23 +52,24 @@ export let wpRequire: WebpackInstance | undefined;
 export const listeners = new Set<(this: any, ...args: Parameters<WebpackChunk[1][keyof WebpackChunk[1]]>) => void>()
 const patchPlaintext = (modules: WebpackChunk[1], id: string | number, module: WebpackChunk[1][keyof WebpackChunk[1]]): void =>
 {
-    sources[id] = module.toString();
+    const original = module.toString();
+    sources[id] = original;
 
     let hasPatches = false;
     let newMod: any = module;
-    
-    pluginPlaintexts.forEach(({ default: plaintexts }) =>
+
+    plaintextPatches.forEach((plaintexts) =>
     {
         if (Array.isArray(plaintexts))
         {
             const source = sources[id];
 
-            plaintexts.forEach((patch: PlaintextPatch) =>
+            plaintexts.forEach((patch) =>
             {
                 let matched = false;
 
                 if (typeof patch.find === 'string')
-                    matched = source.includes(patch.find)
+                    matched = source.includes(patch.find);
                 else {
                     matched = Boolean(source.match(patch.find));
                 }
@@ -95,7 +84,7 @@ const patchPlaintext = (modules: WebpackChunk[1], id: string | number, module: W
                             sources[id] = sources[id].replace(replacement.match, replacement.replace);
 
                         // for logging. coreLogger.info('Plaintext patched', id, replacement, sources[id])
-                    })
+                    });
 
                     hasPatches = true;
                 }
@@ -106,12 +95,22 @@ const patchPlaintext = (modules: WebpackChunk[1], id: string | number, module: W
     try
     {
         newMod = hasPatches
-            ? eval(
+            ? (0, eval)(
                 `// PatchedSource ${id}\n\n(${sources[id]})\n//# sourceURL=distrust://distrust/webpack/${id}`
             )
             : module;
     }
-    catch {}
+    catch (e)
+    {
+        coreLogger.error(
+            `failed to apply plaintext patch for module "${id}"\n`,
+            e,
+            '\n',
+            { patched: sources[id], original },
+        );
+
+        sources[id] = original;
+    }
 
     function newModule(this: any, ...args: Parameters<WebpackChunk[1][keyof WebpackChunk[1]]>): void
     {

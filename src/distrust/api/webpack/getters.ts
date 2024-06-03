@@ -10,16 +10,14 @@ export const filters = {
     byId: (id: string | number) => (module: WebpackModule): boolean => String(module.id) === String(id),
 
     /** only searches <module>.exports.default */
-    byDefaultProps: (...props: string[]) => (module: WebpackModule): boolean => {
-        const _default = module?.exports?.default;
-        return ['function', 'object'].includes(typeof _default) && props.every(prop => prop in _default);
-    },
+    byDefaultProps: (...props: string[]) => (module: WebpackModule): boolean =>
+        ['function', 'object'].includes(typeof module?.exports?.default)
+        && props.every((prop) => prop in module.exports.default),
 
     /** only searches <module>.exports */
-    byExportsProps: (...props: string[]) => (module: WebpackModule): boolean => {
-        const exports = module?.exports;
-        return typeof exports === 'object' && props.every(prop => prop in exports);
-    },
+    byExportsProps: (...props: string[]) => (module: WebpackModule): boolean =>
+        typeof module?.exports === 'object'
+        && props.every((prop) => prop in module.exports),
 
     /** searches both <module>.exports and <module>.exports.default */
     byProps: (...props: string[]) => (module: WebpackModule): boolean =>
@@ -27,6 +25,39 @@ export const filters = {
 
     byPrototype: (...props: string[]) => (module: WebpackModule): boolean =>
         typeof module?.exports?.prototype === 'object' && props.every(prop => prop in module.exports.prototype),
+
+    byDefaultPrototype: (...props: string[]) => (module: WebpackModule): boolean =>
+        ['function', 'object'].includes(typeof module?.exports?.default?.prototype)
+        && props.every((prop) => prop in module?.exports?.default?.prototype),
+
+    /** @example
+     * ```js
+     * const { webpack } = window.distrust;
+     *
+     * webpack.getModule(
+     *      webpack.filters.byFactoryProps(
+     *          (module) => module?.exports?.<object-like prop>,
+     *          'a',
+     *          'b',
+     *          // ...
+     *      )
+     * )
+     * // => Module {
+     * //     <object-like prop>: {
+     * //         a: ...,
+     * //         b: ...,
+     * //         ...
+     * //     }
+     * // };
+     * ```
+     */
+    byFactoryProps: (factory: (module: WebpackModule) => Record<string, unknown> | void, ...props: string[]) =>
+        (module: WebpackModule) => {
+            const res = factory(module);
+
+            return ['function', 'object'].includes(typeof res)
+                && props.every((prop) => prop in res);
+        },
 
     bySource: (match: string | RegExp) => (module: WebpackModule): boolean => {
         const source = sources[module.id];
