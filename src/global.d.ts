@@ -1,4 +1,4 @@
-﻿import {Mod, Theme} from "./distrust/renderer/managers/plugins";
+﻿import { Plugin, Theme } from "./types";
 
 export {};
 
@@ -14,9 +14,9 @@ declare global {
                 get: (key: string) => Promise<string>;
             };
             addons: {
-                loadPlugins: () => Promise<Array<{ source: string, manifest: Mod['manifest'] }>>;
+                loadPlugins: () => Promise<Array<{ source: string, manifest: Plugin['manifest'] }>>;
                 loadThemes: () => Promise<Theme[]>;
-                loadPatches: () => Promise<Mod[]>;
+                loadPlaintextPatches: () => Promise<Array<{ source: string, manifest: Plugin['manifest'] }>>;
             };
             locations: {
                 plugins: string;

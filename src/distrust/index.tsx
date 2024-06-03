@@ -38,7 +38,7 @@ Promise.allSettled([modules.waitForReady, common.waitForReady])
                 {
                     const importUrl = URL.createObjectURL(
                         new Blob(
-                            [source + `\n\n//# sourceURL=distrust://distrust/plugin/${manifest.name}`],
+                            [ source + `\n\n//# sourceURL=distrust://distrust/plugin/${manifest.name}` ],
                             { type: 'text/javascript' },
                         ),
                     );
@@ -52,7 +52,7 @@ Promise.allSettled([modules.waitForReady, common.waitForReady])
                     catch (e)
                     {
                       coreLogger.warn(`failed to load "${manifest.name}"; it will be ignored\n\n`, e);
-                    }                    
+                    }
                 }))
             )
             .then(() => pluginsManager.startAll());
