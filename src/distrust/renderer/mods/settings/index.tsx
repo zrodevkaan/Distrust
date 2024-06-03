@@ -11,6 +11,8 @@ import CustomCSSEditor from "./components/CustomCSS";
 import {modules} from "../../../api/webpack/common";
 import {themes} from "../../managers/themes";
 import {ThemeCard} from "./components/Themes";
+import {DeveloperTab} from "./components/Developer";
+import {generalSettings} from "../../../devConsts";
 
 const { TextClasses } = common.modules.components;
 
@@ -45,10 +47,19 @@ const tabs = [
         label: 'Custom CSS',
         element: () => {
             return (
-                <CustomCSSEditor/>
+                <CustomCSSEditor settingName={'customCss'}/>
             )
         }
+    },
+    {
+        id: 4,
+        label: 'Developer',
+        element: () =>
+        {
+            return <DeveloperTab/>
+        }
     }
+
 
 ];
 
@@ -79,6 +90,11 @@ export const start = async () =>
       height: 100%;
       width: 100%;
       font-size: 20px;
+    }
+
+    .warning-css
+    {
+        color: red;
     }
 
     .channelTabBarItem {

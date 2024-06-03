@@ -26,3 +26,5 @@
 };
 
 export const uninjectCSS = (name: string): void => document.getElementById(name)?.remove?.()
+
+export const getInnerCSS = (name: string): string => document.getElementById(name)?.innerHTML || '';
