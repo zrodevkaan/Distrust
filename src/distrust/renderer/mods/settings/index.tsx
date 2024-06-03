@@ -115,21 +115,17 @@ export const start = async () =>
 
     .topper {
       background-color: var(--background-secondary-alt);
-      padding: 9px;
-      display: flex;
-      align-items: center;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: min-content min-content min-content auto;
       border-top-left-radius: 9px;
       border-top-right-radius: 9px;
       width: 100%;
+      align-items: flex-end;
     }
-
-    .info-topper {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      margin-left: 10px;
-    }
-
+    .topper h3, .topper .small-text {width: max-content; padding: 5px}
+    .distrust-switch {justify-self: end;}
+    .description {padding: 5px 5px 5px 15px}
     .info {
       display: flex;
       justify-content: space-between;

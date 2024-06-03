@@ -22,15 +22,15 @@ export const ThemeCard = ({ theme }: { theme: Theme }) =>
 
     return (
         <div style={{ marginBottom: '10px' }}>
-            <div className="card" style={{ cursor: 'pointer' }}>
-                <div className="info">
+        <div className="card" style={{ cursor: 'pointer' }}>
+            <div className="topper">
                     <h3><strong>{theme.manifest.name}</strong></h3>
-                    <p>{(theme.manifest.authors || ['Unknown']).join(", ")}</p>
-                    <p>{(theme.manifest.version || '0.0.0')}</p>
-                </div>
-                <p>{theme.manifest.description}</p>
-                <Switch checked={isToggled} onChange={handleToggle} />
+                    <span className="small-text">Author: {theme.manifest.authors.join(", ")}</span>
+                    <span className="small-text">v{theme.manifest.version}</span>
+                    <Switch className="distrust-switch" checked={isToggled} onChange={handleToggle}/>
             </div>
+            <p className="description">{theme.manifest.description}</p>
         </div>
+    </div>
     );
 };
