@@ -2,7 +2,7 @@
 import "./overrides/network";
 
 import path from "node:path";
-import electron, { session, app } from "electron";
+import electron, { session, app, shell } from "electron";
 import fs from "fs";
 
 import { MOD_NAME } from "../../consts";
@@ -14,6 +14,10 @@ import type { Plugin } from '../../types';
 type FolderStructure = {
     [key: string]: FolderStructure | never[];
 };
+
+electron.ipcMain.handle('openPath', async (event, folderPath) => {
+    await shell.openPath(folderPath);
+});
 
 electron.ipcMain.handle('readSettings', (_, { path: basePath, name }) =>
 {

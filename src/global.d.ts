@@ -7,6 +7,10 @@ declare global {
         distrust: any;
         ace: any;
         DistrustNative: {
+            utils:
+                {
+                    openExplorer: (path) => void
+                }
             settings: {
                 set: (name: string, data: any) => Promise<
                     { success: true, logger: string } | { error: string }

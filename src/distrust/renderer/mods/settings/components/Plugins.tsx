@@ -1,5 +1,4 @@
 ﻿import { common } from "../../../../api/webpack";
-import { Mod } from "../../../managers/plugins";
 import { enable, disable, getPlugin } from "../../../managers/plugins";
 
 const { react: React, components: { Switch } } = common.modules;

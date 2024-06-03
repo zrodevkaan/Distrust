@@ -107,6 +107,8 @@ const loadThemes = async (): Promise<any[]> =>
     return [];
 }
 
+const openExplorer = (folderPath: any) => ipcRenderer.invoke('openPath', folderPath)
+
 contextBridge.exposeInMainWorld(
     'DistrustNative',
     {
@@ -119,5 +121,8 @@ contextBridge.exposeInMainWorld(
             settings: settingsLocation,
             react: reactLocation,
         },
+        utils: {
+            openExplorer
+        }
     },
 );

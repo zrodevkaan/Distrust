@@ -8,13 +8,13 @@ import {DistrustIcon} from "./components/Distrust";
 import {plugins} from "../../managers/plugins";
 import {PluginCard} from "./components/Plugins";
 import CustomCSSEditor from "./components/CustomCSS";
-import {modules} from "../../../api/webpack/common";
 import {themes} from "../../managers/themes";
 import {ThemeCard} from "./components/Themes";
 import {DeveloperTab} from "./components/Developer";
-import {generalSettings} from "../../../devConsts";
+import {getKeys} from "../../../api/webpack/getters";
 
 const { TextClasses } = common.modules.components;
+const Modals = getKeys('Anchor');
 
 const settingsLogger = new Logger('Settings')
 const injector = new Patcher('settings')
@@ -25,8 +25,13 @@ const tabs = [
         label: 'Plugins',
         element: () => (
             <div>
+                <div className={'card'}>
+                    <Modals.Button onClick={() => window.DistrustNative.utils.openExplorer(window.DistrustNative.locations.plugins)}>
+                        Open Plugins
+                    </Modals.Button>
+                </div>
                 {plugins.map(plugin => (
-                    !plugin.coremod && <PluginCard key={plugin.id} plugin={plugin}/>
+                    !plugin.coremod && <PluginCard plugin={plugin}/>
                 ))}
             </div>
         )
@@ -36,8 +41,14 @@ const tabs = [
         label: 'Themes',
         element: () => (
             <div>
+                <div className={'card'}>
+                    <Modals.Button
+                        onClick={() => window.DistrustNative.utils.openExplorer(window.DistrustNative.locations.plugins)}>
+                        Open Themes
+                    </Modals.Button>
+                </div>
                 {themes.map(plugin => (
-                    <ThemeCard theme={plugin} />
+                    <ThemeCard theme={plugin}/>
                 ))}
             </div>
         )
@@ -47,16 +58,25 @@ const tabs = [
         label: 'Custom CSS',
         element: () => {
             return (
-                <CustomCSSEditor settingName={'customCss'}/>
-            )
+                <>
+                    <div className={'card'}>
+                        <Modals.Button
+                            onClick={() => window.DistrustNative.utils.openExplorer(window.DistrustNative.locations.settings)}>
+                            Open Settings
+                        </Modals.Button>
+                    </div>
+                    <CustomCSSEditor settingName={'customCss'}/>
+                </>
+        )
         }
     },
     {
         id: 4,
         label: 'Developer',
-        element: () =>
-        {
-            return <DeveloperTab/>
+        element: () => {
+            return (
+                <DeveloperTab/>
+            )
         }
     }
 
