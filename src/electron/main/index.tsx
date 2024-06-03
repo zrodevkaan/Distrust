@@ -8,6 +8,7 @@ import { MOD_NAME } from "../../consts";
 import { BASE_DIR } from '../consts';
 
 import {ReactDevToolsPath} from "./overrides/reactDevTools";
+import {coreLogger} from "../../distrust/devConsts";
 
 type FolderStructure = {
     [key: string]: FolderStructure | never[];
@@ -111,6 +112,37 @@ electron.ipcMain.handle('loadPlugins', async (_, { path: pluginsPath }) => {
     {
         console.error('distrust @ main @ loadPlugins (ipc):', 'error loading plugins:', error);
         return { status: 'error', message: (error as Error).message };
+    }
+});
+
+electron.ipcMain.handle('loadPluginPatches', async (_, { path: pluginsPath }) => {
+    try {
+        const patches = [];
+
+        const pluginDirectories = fs.readdirSync(pluginsPath, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+
+        /* God evie. I leave this all to you. I CAN NOT BE ASKED to make this actually function*/
+        /* Stupid ESM and stupid importing. can't be asked. */
+        
+        /*for (const dirent of pluginDirectories) {
+                const patchPath = path.join(pluginsPath, dirent, 'patches.ts');
+
+                try {
+                    const patchContent = fs.readFileSync(patchPath, 'utf-8');
+                        const patchObjects = JSON.parse(patchContent);
+
+                        patches.push({ name: dirent, patches: patchObjects });   
+                } catch (error) {
+                    console.warn('Error loading patches for plugin:', dirent, error);
+                }
+        }*/
+        
+        return { status: 'success', patches };
+    } catch (error) {
+        console.error('Error loading plugin patches:', error);
+        return { status: 'error', message: error.message };
     }
 });
 

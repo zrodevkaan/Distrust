@@ -16,6 +16,7 @@ declare global {
             addons: {
                 loadPlugins: () => Promise<Array<{ source: string, manifest: Mod['manifest'] }>>;
                 loadThemes: () => Promise<Theme[]>;
+                loadPatches: () => Promise<Mod[]>;
             };
             locations: {
                 plugins: string;

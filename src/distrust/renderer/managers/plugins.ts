@@ -1,4 +1,4 @@
-﻿import { coreLogger, generalSettings } from "../../devConsts";
+﻿import {coreLogger, generalSettings} from "../../devConsts";
 
 export const plugins: Mod[] = [];
 
@@ -8,6 +8,11 @@ export const pluginPlaintexts: any[] = [
     require('../mods/settings/patches'),
     require('../mods/contextMenu/patches'),
 ];
+
+export const externalPatches = async () =>
+{
+    return await window.DistrustNative.addons.loadPatches();
+}
 
 export const loadCoremods = async (): Promise<void> => {
     plugins.push(

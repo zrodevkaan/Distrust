@@ -65,6 +65,27 @@ const loadPlugins = async (): Promise<any[]> =>
     return [];
 }
 
+const loadPatches = async (): Promise<any[]> =>
+{
+    try
+    {
+        const result = await ipcRenderer.invoke('loadPluginPatches', { path: pluginLocation });
+
+        if (result.status !== 'success') {
+            console.error('distrust @ preload @ loadPluginPatches:', 'error (ipc) gathering patches:', result.message);
+            return [];
+        }
+
+        return result.patches.filter(Boolean);
+    }
+    catch (error)
+    {
+        console.error('distrust @ preload @ loadPluginPatches:', 'error gathering patches:', error);
+    }
+
+    return [];
+}
+
 const loadThemes = async (): Promise<any[]> =>
 {
     try
@@ -90,7 +111,7 @@ contextBridge.exposeInMainWorld(
     'DistrustNative',
     {
         settings: { get, set },
-        addons: { loadPlugins, loadThemes },
+        addons: { loadPlugins, loadThemes, loadPatches },
         locations:
         {
             plugins: pluginLocation,

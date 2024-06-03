@@ -1,5 +1,5 @@
 import { WebpackInstance } from "discord-types/other";
-import { pluginPlaintexts } from '../../renderer/managers/plugins';
+import {externalPatches, pluginPlaintexts} from '../../renderer/managers/plugins';
 import { coreLogger } from "../../devConsts";
 
 export interface WebpackModule extends Omit<Parameters<WebpackInstance['m']>[0], 'id'>
@@ -62,14 +62,13 @@ const wpChunk = window.webpackChunkdiscord_app ??= [];
 export let wpRequire: WebpackInstance | undefined;
 
 export const listeners = new Set<(this: any, ...args: Parameters<WebpackChunk[1][keyof WebpackChunk[1]]>) => void>()
-
 const patchPlaintext = (modules: WebpackChunk[1], id: string | number, module: WebpackChunk[1][keyof WebpackChunk[1]]): void =>
 {
     sources[id] = module.toString();
 
     let hasPatches = false;
     let newMod: any = module;
-
+    
     pluginPlaintexts.forEach(({ default: plaintexts }) =>
     {
         if (Array.isArray(plaintexts))
