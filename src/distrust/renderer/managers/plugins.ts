@@ -1,63 +1,76 @@
-﻿import {coreLogger, generalSettings} from "../../devConsts";
+﻿import { coreLogger, generalSettings } from "../../devConsts";
+import type { PlaintextPatch, Plugin } from "../../../types";
 
-export const plugins: Mod[] = [];
+export const plugins: Plugin[] = [];
 
-export const pluginPlaintexts: any[] = [
-    require('../mods/experiments/patches'),
-    require('../mods/noDevtoolsWarnings/patches'),
-    require('../mods/settings/patches'),
-    require('../mods/contextMenu/patches'),
+const _extractDefault = <T = any>(module: any): T =>
+    module?.default as T;
+
+export const plaintextPatches: PlaintextPatch[][] = [
+    await import('../mods/experiments/patches').then(_extractDefault),
+    await import('../mods/noDevtoolsWarnings/patches').then(_extractDefault),
+    await import('../mods/settings/patches').then(_extractDefault),
+    await import('../mods/contextMenu/patches').then(_extractDefault),
+    ...(
+        await window.DistrustNative.addons.loadPlaintextPatches().then((res) =>
+            Promise.all<Promise<PlaintextPatch[]>[]>(
+                res.map(async ({ source, manifest }) =>
+                {
+                    const importURL = URL.createObjectURL(
+                        new Blob(
+                            [ source + `\n\n//# sourceURL=distrust://distrust/plaintextPatches/${manifest.name}` ],
+                            { type: 'text/javascript' },
+                        ),
+                    );
+
+                    try
+                    {
+                        const plaintextPatch = await import(importURL);
+
+                        if (Array.isArray(plaintextPatch?.default)) {
+                            coreLogger.info(`loaded plaintext patch for "${manifest.name}"`);
+
+                            return plaintextPatch.default;
+                        }
+                    }
+                    catch (e)
+                    {
+                        coreLogger.warn(`failed to load plaintext patch for "${manifest.name}"; it will be ignored\n`, e);
+                    }
+                })
+            )
+        )
+    ),
 ];
-
-export const externalPatches = async () =>
-{
-    return await window.DistrustNative.addons.loadPatches();
-}
 
 export const loadCoremods = async (): Promise<void> => {
     plugins.push(
         {
-            manifest: require('../mods/experiments/manifest.json'),
-            exports: require('../mods/experiments'),
-            coremod: true
+            manifest: await import('../mods/experiments/manifest.json'),
+            exports: await import('../mods/experiments'),
+            coremod: true,
         },
         {
-            manifest: require('../mods/noDevtoolsWarnings/manifest.json'),
-            exports: require('../mods/noDevtoolsWarnings'),
-            coremod: true
+            manifest: await import('../mods/noDevtoolsWarnings/manifest.json'),
+            exports: await import('../mods/noDevtoolsWarnings'),
+            coremod: true,
         },
         {
-            manifest: require('../mods/recovery/manifest.json'),
-            exports: require('../mods/recovery'),
-            coremod: true
+            manifest: await import('../mods/recovery/manifest.json'),
+            exports: await import('../mods/recovery'),
+            coremod: true,
         },
         {
-            manifest: require('../mods/settings/manifest.json'),
-            exports: require('../mods/settings'),
-            coremod: true
+            manifest: await import('../mods/settings/manifest.json'),
+            exports: await import('../mods/settings'),
+            coremod: true,
         },
         {
-            manifest: require('../mods/contextMenu/manifest.json'),
-            exports: require('../mods/contextMenu'),
-            coremod: true
+            manifest: await import('../mods/contextMenu/manifest.json'),
+            exports: await import('../mods/contextMenu'),
+            coremod: true,
         },
     );
-};
-
-export interface Mod {
-    manifest: {
-        name: string;
-        authors: string[];
-        description: string;
-        version: string;
-    };
-    exports: {
-        start?: () => void | Promise<void>;
-        stop?: () => void | Promise<void>;
-        [key: string]: unknown;
-    };
-    started?: boolean;
-    coremod?: boolean;
 };
 
 export const getPlugin = (id: string) =>

@@ -1,7 +1,8 @@
-import {filters, getKeys, waitForModule} from "./getters";
+import {filters, waitForModule} from "./getters";
 import type React from 'react';
 
 export const modules = {
+    ace: null as any,
     flux: null as any,
     react: null as unknown as typeof React,
     components:
@@ -40,11 +41,11 @@ Promise.allSettled([
     {
         modules.react = module;
     }),
-    
+
     waitForModule(filters.byProps('sectionDivider')).then((module) =>
     {
         modules.components.DividerClasses = module;
-        modules.components.Divider = function Divider({ style })
+        modules.components.Divider = function Divider({ style }: { style: React.CSSProperties })
         {
             return <div className={module.sectionDivider} style={style} />;
         };
@@ -85,5 +86,21 @@ Promise.allSettled([
                 createToastModule?.createToast?.(message, kind),
             );
         };
+    }),
+
+    new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+
+        script.onload = () => {
+            resolve(undefined);
+
+            modules.ace = window.ace;
+        }
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/ace/1.5.3/ace.js";
+        script.id = "aceEditor";
+
+        document.head.appendChild(script);
+
+        setTimeout(() => reject(), 30000);
     }),
 ]).then(() => _ready());

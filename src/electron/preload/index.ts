@@ -65,14 +65,14 @@ const loadPlugins = async (): Promise<any[]> =>
     return [];
 }
 
-const loadPatches = async (): Promise<any[]> =>
+const loadPlaintextPatches = async (): Promise<any[]> =>
 {
     try
     {
-        const result = await ipcRenderer.invoke('loadPluginPatches', { path: pluginLocation });
+        const result = await ipcRenderer.invoke('loadPlaintextPatches', { path: pluginLocation });
 
         if (result.status !== 'success') {
-            console.error('distrust @ preload @ loadPluginPatches:', 'error (ipc) gathering patches:', result.message);
+            console.error('distrust @ preload @ loadPlaintextPatches:', 'error (ipc) loading plaintext patches:', result.message);
             return [];
         }
 
@@ -80,7 +80,7 @@ const loadPatches = async (): Promise<any[]> =>
     }
     catch (error)
     {
-        console.error('distrust @ preload @ loadPluginPatches:', 'error gathering patches:', error);
+        console.error('distrust @ preload @ loadPlaintextPatches:', 'error loading plaintext patches:', error);
     }
 
     return [];
@@ -111,7 +111,7 @@ contextBridge.exposeInMainWorld(
     'DistrustNative',
     {
         settings: { get, set },
-        addons: { loadPlugins, loadThemes, loadPatches },
+        addons: { loadPlugins, loadThemes, loadPlaintextPatches },
         locations:
         {
             plugins: pluginLocation,

@@ -11,7 +11,7 @@ const build = {
 await Promise.all([
   (build.main || build.all) && esbuild.build({
     bundle: true,
-    entryPoints: ['src/electron/main/index.tsx'],
+    entryPoints: ['src/electron/main/index.ts'],
     external: ['electron'],
     logLevel: 'info',
     outfile: 'build/distrust.js',
@@ -19,7 +19,7 @@ await Promise.all([
   }),
   (build.preload || build.all) && esbuild.build({
     bundle: true,
-    entryPoints: ['src/electron/preload/index.tsx'],
+    entryPoints: ['src/electron/preload/index.ts'],
     external: ['electron'],
     logLevel: 'info',
     outfile: 'build/preload.min.js',

@@ -103,7 +103,7 @@ const startMainRecovery = (): void =>
 
 export const start = async (): Promise<void> =>
 {
-    const parser = webpack.getModule(x => x?.exports?.default?.parse)?.default;
+    const parser = webpack.getModule(webpack.filters.byDefaultProps('parse'))?.default;
 
     injectCSS(
         'recovery',

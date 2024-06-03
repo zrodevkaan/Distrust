@@ -1,16 +1,6 @@
 import { coreLogger, generalSettings } from "../../devConsts";
 import { injectCSS, uninjectCSS } from "../../api/css";
-
-export interface Theme {
-    manifest: {
-        name: string;
-        authors: string[];
-        description: string;
-        version: string;
-    };
-    source: string,
-    started: boolean;
-}
+import type { Theme } from "../../../types";
 
 export const themes: Theme[] = [];
 

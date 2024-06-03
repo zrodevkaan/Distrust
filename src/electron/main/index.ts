@@ -4,11 +4,12 @@ import "./overrides/network";
 import path from "node:path";
 import electron, { session, app } from "electron";
 import fs from "fs";
+
 import { MOD_NAME } from "../../consts";
 import { BASE_DIR } from '../consts';
 
-import {ReactDevToolsPath} from "./overrides/reactDevTools";
-import {coreLogger} from "../../distrust/devConsts";
+import { ReactDevToolsPath } from "./overrides/reactDevTools";
+import type { Plugin } from '../../types';
 
 type FolderStructure = {
     [key: string]: FolderStructure | never[];
@@ -93,7 +94,7 @@ electron.ipcMain.handle('loadPlugins', async (_, { path: pluginsPath }) => {
                     console.warn(
                         'distrust @ main @ loadPlugins (ipc):',
                         `manifest for plugin in ${path.join(pluginsPath, dir)} is missing field(s):`,
-                        `{ ${missingManifestFields.join(', ')} }; `,
+                        `{ ${missingManifestFields.join(', ')} };`,
                         missingManifestFields.includes('name')
                             ? 'ignoring since important identifier props like { name } is omitted.'
                             : 'allowing since important identifier props like { name } is not omitted.',
@@ -115,34 +116,69 @@ electron.ipcMain.handle('loadPlugins', async (_, { path: pluginsPath }) => {
     }
 });
 
-electron.ipcMain.handle('loadPluginPatches', async (_, { path: pluginsPath }) => {
-    try {
-        const patches = [];
+electron.ipcMain.handle('loadPlaintextPatches', async (_, { path: pluginsPath }) =>
+{
+    try
+    {
+        const patches: Array<{ source: string, manifest: Plugin['manifest'] }> = [];
 
-        const pluginDirectories = fs.readdirSync(pluginsPath, { withFileTypes: true })
-            .filter(dirent => dirent.isDirectory())
-            .map(dirent => dirent.name);
+        // plaintext patches in plugins must be exported in a file named patches.js
 
-        /* God evie. I leave this all to you. I CAN NOT BE ASKED to make this actually function*/
-        /* Stupid ESM and stupid importing. can't be asked. */
-        
-        /*for (const dirent of pluginDirectories) {
-                const patchPath = path.join(pluginsPath, dirent, 'patches.ts');
+        const dirs = fs.readdirSync(pluginsPath, { withFileTypes: true })
+            .filter((dirent) => dirent.isDirectory())
+            .map((dirent) => dirent.name);
 
-                try {
-                    const patchContent = fs.readFileSync(patchPath, 'utf-8');
-                        const patchObjects = JSON.parse(patchContent);
+        for (const dir of dirs)
+        {
+            const patchesPath = path.join(pluginsPath, dir, 'patches.js');
+            const manifestPath = path.join(pluginsPath, dir, 'manifest.json');
 
-                        patches.push({ name: dirent, patches: patchObjects });   
-                } catch (error) {
-                    console.warn('Error loading patches for plugin:', dirent, error);
+            if (fs.existsSync(patchesPath) && fs.existsSync(manifestPath))
+            {
+                try
+                {
+                    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+
+                    if (manifest?.name)
+                        patches.push(
+                            {
+                                source: fs.readFileSync(patchesPath, { encoding: 'utf-8' }),
+                                manifest,
+                            }
+                        );
+                    else
+                        console.warn(
+                            'distrust @ main @ loadPlaintextPatches (ipc):',
+                            `manifest for plugin in ${path.join(pluginsPath, dir)}`,
+                            'is missing important identifier props like { name }.',
+                            'ignoring.',
+                        );
                 }
-        }*/
-        
+                catch (e)
+                {
+                    console.warn(
+                        'distrust @ main @ loadPlaintextPatches (ipc):',
+                        `error loading plaintext patches of ${path.join(pluginsPath, dir)}:`,
+                        e
+                    );
+                }
+            }
+            else if (!fs.existsSync(manifestPath))
+                console.warn(
+                    'distrust @ main @ loadPlaintextPatches (ipc):',
+                    `manifest.json not found in ${path.join(pluginsPath, dir)}`,
+                );
+        }
+
         return { status: 'success', patches };
     } catch (error) {
-        console.error('Error loading plugin patches:', error);
-        return { status: 'error', message: error.message };
+        console.error(
+            'distrust @ main @ loadPlaintextPatches (ipc):',
+            'error loading plaintext patches:',
+            error
+        );
+
+        return { status: 'error', message: (error as Error).message };
     }
 });
 
