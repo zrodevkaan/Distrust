@@ -20,8 +20,8 @@ export const PluginCard = ({ plugin }: { plugin: Mod }) => {
         <div className="card" style={{ cursor: 'pointer' }}>
             <div className="topper">
                     <h3><strong>{plugin.manifest.name}</strong></h3>
-                    <span className="small-text">Author: {plugin.manifest.authors ? plugin.manifest.authors.join(", ") : ''}</span>
-                    <span className="small-text">v{plugin.manifest.version}</span>
+                    <span className="small-text">Author: {plugin.manifest.authors.join(", ") ?? "Unknown"}</span>
+                    <span className="small-text">v{plugin.manifest.version ?? "Unknown"}</span>
                     <Switch className="distrust-switch" checked={isToggled} onChange={handleToggle}/>
             </div>
             <p className="description">{plugin.manifest.description}</p>

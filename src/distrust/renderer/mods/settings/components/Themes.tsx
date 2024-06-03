@@ -25,8 +25,8 @@ export const ThemeCard = ({ theme }: { theme: Theme }) =>
         <div className="card" style={{ cursor: 'pointer' }}>
             <div className="topper">
                     <h3><strong>{theme.manifest.name}</strong></h3>
-                    <span className="small-text">Author: {theme.manifest.authors.join(", ")}</span>
-                    <span className="small-text">v{theme.manifest.version}</span>
+                    <span className="small-text">Author: {theme.manifest.authors?.join?.(", ") ?? "Unknown"}</span>
+                    <span className="small-text">v{theme.manifest.version ?? 'Unknown'}</span>
                     <Switch className="distrust-switch" checked={isToggled} onChange={handleToggle}/>
             </div>
             <p className="description">{theme.manifest.description}</p>
