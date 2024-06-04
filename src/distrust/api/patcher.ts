@@ -65,8 +65,8 @@ export class Patcher {
 
         targetObject[methodName] = function () {
             const result = originalMethod.apply(this, arguments);
-            afterCallback.call(this, this, result, [...arguments]);
-            return result;
+            // @ts-ignore
+            return afterCallback.call(this, this, result, [...arguments]) ?? result;
         };
 
         const unpatch = this.createUnpatchFunction(targetObject, methodName);

@@ -15,6 +15,7 @@ export const modules = {
         Menu: null as any,
         Switch: null as any,
     },
+    dispatcher: null as any,
     toast: null as unknown as (message: string, kind?: number, options?: Record<string, unknown>) => void,
 }
 
@@ -53,6 +54,10 @@ Promise.allSettled([
 
     waitForModule(filters.bySource('xMinYMid meet')).then(module => {
         modules.components.Switch = module.Switch;
+    }),
+
+    waitForModule(filters.byProps('dispatch')).then(module => {
+        modules.dispatcher = module.default;
     }),
 
     waitForModule(filters.byProps('FormSwitch')).then((module) =>
