@@ -284,3 +284,19 @@ app.whenReady().then(() => {
     console.log('distrust @ main @ app.whenReady:', "app ready");
     session.defaultSession.loadExtension(ReactDevToolsPath);
 })
+
+// Fix Spotify Embeds RAYGUN BLASTING the hell out of your ears.
+app.on("browser-window-created", (_, win) => {
+    win.webContents.on("frame-created", (_, { frame }) => {
+        frame.once("dom-ready", () => {
+            /^https:\/\/open\.spotify\.com\/embed/.test(frame.url) 
+            && 
+            void frame.executeJavaScript(`
+                Audio.prototype.play = (p => function() {
+                    this.volume = 0.05;
+                    return p.apply(this, arguments);
+                })(Audio.prototype.play);
+            `);
+        });
+    });
+});
