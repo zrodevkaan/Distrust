@@ -1,6 +1,5 @@
 ﻿import { Logger } from "./logger";
 import { buildItem, ContextMenuData } from "../renderer/mods/contextMenu";
-import { coreLogger } from "../devConsts";
 
 interface TargetObject {
     [key: string]: any;
@@ -66,6 +65,7 @@ export class Patcher {
         targetObject[methodName] = function () {
             const result = originalMethod.apply(this, arguments);
             // @ts-ignore
+            // noinspection JSVoidFunctionReturnValueUsed
             return afterCallback.call(this, this, result, [...arguments]) ?? result;
         };
 
