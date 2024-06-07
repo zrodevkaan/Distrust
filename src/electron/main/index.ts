@@ -72,50 +72,56 @@ electron.ipcMain.handle('loadPlugins', async (_, { path: pluginsPath }) => {
 
         for (const dir of pluginDirectories)
         {
-            const manifestPath = path.join(pluginsPath, dir, 'manifest.json');
-            const indexPath = path.join(pluginsPath, dir, 'index.js');
+            try {
+                const manifestPath = path.join(pluginsPath, dir, 'manifest.json');
+                const indexPath = path.join(pluginsPath, dir, 'index.js');
 
-            if (fs.existsSync(manifestPath) && fs.existsSync(indexPath))
-            {
-                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+                if (fs.existsSync(manifestPath) && fs.existsSync(indexPath))
+                {
+                    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
 
-                const source = fs.readFileSync(indexPath, 'utf-8');
+                    const source = fs.readFileSync(indexPath, 'utf-8');
 
-                const missingManifestFields = [
-                    !manifest.name && 'name',
-                    !manifest.authors && 'authors',
-                    !manifest.description && 'description',
-                    !manifest.version && 'version',
-                ].filter(Boolean);
+                    const missingManifestFields = [
+                        !manifest.name && 'name',
+                        !manifest.authors && 'authors',
+                        !manifest.description && 'description',
+                        !manifest.version && 'version',
+                    ].filter(Boolean);
 
-                if (!missingManifestFields.includes('name'))
-                    plugins.push({
-                        manifest,
-                        source,
-                    });
+                    if (!missingManifestFields.includes('name'))
+                        plugins.push({
+                            manifest,
+                            source,
+                        });
 
-                if (missingManifestFields.length > 0)
+                    if (missingManifestFields.length > 0)
+                        console.warn(
+                            'distrust @ main @ loadPlugins (ipc):',
+                            `manifest for plugin in ${path.join(pluginsPath, dir)} is missing field(s):`,
+                            `{ ${missingManifestFields.join(', ')} };`,
+                            missingManifestFields.includes('name')
+                                ? 'ignoring since important identifier props like { name } is omitted.'
+                                : 'allowing since important identifier props like { name } is not omitted.',
+                        );
+                }
+                else
                     console.warn(
                         'distrust @ main @ loadPlugins (ipc):',
-                        `manifest for plugin in ${path.join(pluginsPath, dir)} is missing field(s):`,
-                        `{ ${missingManifestFields.join(', ')} };`,
-                        missingManifestFields.includes('name')
-                            ? 'ignoring since important identifier props like { name } is omitted.'
-                            : 'allowing since important identifier props like { name } is not omitted.',
+                        `manifest.json or index.js not found in ${path.join(pluginsPath, dir)}`
                     );
             }
-            else
-                console.error(
-                    'distrust @ main @ loadPlugins (ipc):',
-                    `manifest.json or index.js not found in ${path.join(pluginsPath, dir)}`
-                );
+            catch (error)
+            {
+                console.warn('error:',error)
+            }
         }
 
         return { status: 'success', plugins };
     }
     catch (error)
     {
-        console.error('distrust @ main @ loadPlugins (ipc):', 'error loading plugins:', error);
+        console.warn('distrust @ main @ loadPlugins (ipc):', 'error loading plugins:', error);
         return { status: 'error', message: (error as Error).message };
     }
 });
