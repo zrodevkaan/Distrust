@@ -11,11 +11,18 @@ class DataHandler
         this.fileName = `${id}.json`;
     }
 
-    get = async (key: string): Promise<any> =>
+    get = async (key: string, fallback: any): Promise<any> =>
     {
         try
         {
-            const fileContent = await window.DistrustNative.settings.get(this.fileName);
+            let fileContent;
+            try {
+                fileContent = await window.DistrustNative.settings.get(this.fileName);
+            }
+            catch (err)
+            {
+                fileContent = fallback;
+            }
             const jsonData = JSON.parse(fileContent);
 
             return jsonData[key];
