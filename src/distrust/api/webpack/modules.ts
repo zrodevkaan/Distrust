@@ -139,10 +139,6 @@ wpChunk.push([
 
         wpRequire = r;
 
-        for (const id in r.m)
-            if (Object.hasOwn(r.m, id))
-                patchPlaintext(r.m as WebpackInstanceModules, id, (r.m as WebpackInstanceModules)[id]);
-
         r.d = (target: object, exports: object) => {
             for (const key in exports) {
                 //if (!Reflect.has(exports, key)) continue;
@@ -157,6 +153,10 @@ wpChunk.push([
                 });
             }
         };
+        
+        for (const id in r.m)
+            if (Object.hasOwn(r.m, id))
+                patchPlaintext(r.m as WebpackInstanceModules, id, (r.m as WebpackInstanceModules)[id]);
         
         r.m = new Proxy(r.m, {
             set(target, key, value)
