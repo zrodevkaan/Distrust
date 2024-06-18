@@ -1,12 +1,11 @@
-import {filters, waitForModule} from "./getters";
-import type React from 'react';
+import { filters, waitForModule } from "./getters";
+import { coreLogger } from "../../devConsts";
 
 export const modules = {
     ace: null as any,
     flux: null as any,
-    react: null as unknown as typeof React,
-    components:
-    {
+    react: null as any,
+    components: {
         Divider: null as any,
         DividerClasses: null as any,
         TextClasses: null as any,
@@ -16,90 +15,109 @@ export const modules = {
     },
     dispatcher: null as any,
     toast: null as unknown as (message: string, kind?: number, options?: Record<string, unknown>) => void,
-}
+};
 
 let _ready: () => void;
 
 export let ready = false;
 
-export const waitForReady = new Promise((r) =>
-{
-    _ready = () =>
-    {
+export const waitForReady = new Promise((r) => {
+    _ready = () => {
         r(undefined);
         ready = true;
-    }
-})
+    };
+});
 
-Promise.allSettled([
-    waitForModule(x=>x.exports?.ZP?.Store).then((module) =>
+const modulePromises = [
     {
-        modules.flux = module.ZP;
-    }),
-
-    waitForModule(filters.byProps('createElement')).then((module) =>
+        name: 'flux',
+        filters: [(x: any) => x.exports?.ZP?.Store],
+        handler: (module: any) => modules.flux = module.ZP
+    },
     {
-        modules.react = module;
-    }),
-
-    waitForModule(filters.byProps('sectionDivider')).then((module) =>
+        name: 'react',
+        filters: [filters.byProps('createElement')],
+        handler: (module: any) => modules.react = module
+    },
     {
-        modules.components.DividerClasses = module;
-        modules.components.Divider = function Divider({ style }: { style: React.CSSProperties })
-        {
-            return <div className={module.sectionDivider} style={style} />;
-        };
-    }),
-
-    waitForModule(filters.bySource('xMinYMid meet')).then(module => {
-        modules.components.Switch = module.r;
-    }),
-
-    waitForModule(x=>x.exports?.Z?.dispatch).then(module => {
-        modules.dispatcher = module.Z;
-    }),
-
-    waitForModule(filters.byProps('FormSwitch')).then((module) =>
-    {
-        modules.components.FormSwitch = module;
-    }),
-
-    waitForModule(filters.byProps('Menu')).then((module) =>
-    {
-        modules.components.Menu = module.Menu;
-    }),
-
-    waitForModule(filters.byProps('text-xs/normal')).then((module) =>
-    {
-        modules.components.TextClasses = module;
-    }),
-
-    Promise.all([
-        waitForModule(filters.byProps('createToast')),
-        waitForModule(filters.byProps('showToast')),
-    ]).then(([createToastModule, showToastModule]): void =>
-    {
-        modules.toast = (message: string, kind?: number, options = {}): void =>
-        {
-            showToastModule?.showToast?.(
-                createToastModule?.createToast?.(message, kind),
-            );
-        };
-    }),
-
-    new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-
-        script.onload = () => {
-            resolve(undefined);
-
-            modules.ace = window.ace;
+        name: 'DividerClasses',
+        filters: [filters.byProps('sectionDivider')],
+        handler: (module: any) => {
+            modules.components.DividerClasses = module;
+            modules.components.Divider = function Divider({ style }: { style: React.CSSProperties }) {
+                return <div className={module.sectionDivider} style={style} />;
+            };
         }
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/ace/1.5.3/ace.js";
-        script.id = "aceEditor";
+    },
+    {
+        name: 'Switch',
+        filters: [filters.bySource('xMinYMid meet')],
+        handler: (module: any) => modules.components.Switch = module.r
+    },
+    {
+        name: 'dispatcher',
+        filters: [(x: any) => x.exports?.Z?.dispatch],
+        handler: (module: any) => modules.dispatcher = module.Z
+    },
+    {
+        name: 'FormSwitch',
+        filters: [filters.byProps('FormSwitch')],
+        handler: (module: any) => modules.components.FormSwitch = module
+    },
+    {
+        name: 'Menu',
+        filters: [filters.byProps('Menu')],
+        handler: (module: any) => modules.components.Menu = module.Menu
+    },
+    {
+        name: 'TextClasses',
+        filters: [filters.byProps('text-xs/normal')],
+        handler: (module: any) => modules.components.TextClasses = module
+    },
+    {
+        name: 'toast',
+        filters: [filters.byProps('createToast'), filters.byProps('showToast')],
+        handler: ([createToastModule, showToastModule]: [any, any]) => {
+            modules.toast = (message: string, kind?: number): void => {
+                showToastModule?.showToast?.(
+                    createToastModule?.createToast?.(message, kind)
+                );
+            };
+        }
+    },
+];
 
-        document.head.appendChild(script);
+const loadModule = async (name: string, filters: any[], handler: any) => {
+    try {
+        const modules = await Promise.all(filters.map(filter => waitForModule(filter)));
+        handler(modules.length === 1 ? modules[0] : modules);
+        coreLogger.info(`${name} module was found.`);
+    } catch {
+        coreLogger.info(`${name} module wasn't found.`);
+        modules[name] = "N/A";
+    }
+};
 
-        setTimeout(() => reject(), 30000);
-    }),
-]).then(() => _ready());
+const loadAceScript = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+
+    script.onload = () => {
+        resolve(undefined);
+        modules.ace = window.ace;
+    };
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/ace/1.5.3/ace.js";
+    script.id = "aceEditor";
+
+    document.head.appendChild(script);
+
+    setTimeout(() => reject(), 30000);
+});
+
+const loadModules = async () => {
+    await Promise.allSettled(modulePromises.map(({ name, filters, handler }) =>
+        loadModule(name, filters, handler)
+    ));
+    return _ready();
+};
+
+Promise.all([loadModules(), loadAceScript]).then(() => _ready());
