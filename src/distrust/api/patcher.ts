@@ -5,7 +5,7 @@ interface TargetObject {
     [key: string]: any;
 }
 
-type BeforeCallback = (...args: any[]) => void;
+type BeforeCallback = (...args: any[]) => any;
 type AfterCallback = (...args: any[]) => void;
 type InsteadCallback = (originalMethod: Function, ...args: any[]) => any;
 
@@ -43,7 +43,10 @@ export class Patcher {
         this.addPatch(targetObject, methodName, originalMethod);
 
         targetObject[methodName] = function (...args: any[]) {
-            beforeCallback.apply(this, args);
+            const beforeResult = beforeCallback.apply(this, args);
+            if (beforeResult !== undefined) {
+                return beforeResult;
+            }
             return originalMethod.apply(this, args);
         };
 

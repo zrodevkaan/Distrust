@@ -11,7 +11,6 @@ export const modules = {
         DividerClasses: null as any,
         TextClasses: null as any,
         FormSwitch: null as any,
-        MenuItem: null as any,
         Menu: null as any,
         Switch: null as any,
     },
@@ -33,9 +32,9 @@ export const waitForReady = new Promise((r) =>
 })
 
 Promise.allSettled([
-    waitForModule(filters.byDefaultProps('Store')).then((module) =>
+    waitForModule(x=>x.exports?.ZP?.Store).then((module) =>
     {
-        modules.flux = module;
+        modules.flux = module.ZP;
     }),
 
     waitForModule(filters.byProps('createElement')).then((module) =>
@@ -53,21 +52,16 @@ Promise.allSettled([
     }),
 
     waitForModule(filters.bySource('xMinYMid meet')).then(module => {
-        modules.components.Switch = module.Switch;
+        modules.components.Switch = module.r;
     }),
 
-    waitForModule(filters.byProps('dispatch')).then(module => {
-        modules.dispatcher = module.default;
+    waitForModule(x=>x.exports?.Z?.dispatch).then(module => {
+        modules.dispatcher = module.Z;
     }),
 
     waitForModule(filters.byProps('FormSwitch')).then((module) =>
     {
         modules.components.FormSwitch = module;
-    }),
-
-    waitForModule(filters.byProps('MenuItem')).then((module) =>
-    {
-        modules.components.MenuItem = module.MenuItem;
     }),
 
     waitForModule(filters.byProps('Menu')).then((module) =>

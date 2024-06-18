@@ -189,7 +189,7 @@ export const start = async () =>
     }
 `);
 
-    const settingsPage = await webpack.waitForModule(webpack.filters.byDefaultPrototype('renderSidebar')).then((module) => module?.default)
+    const settingsPage = await webpack.waitForModule(x=>x.exports?.ZP?.prototype?.renderSidebar).then((module) => module?.ZP)
 
     injector.after(settingsPage?.prototype,'getPredicateSections', (args,b,c) =>
     {
