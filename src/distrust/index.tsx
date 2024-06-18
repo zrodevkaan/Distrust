@@ -8,7 +8,6 @@ import { coreLogger, generalSettings } from "./devConsts";
 import * as contextMenu from "./renderer/mods/contextMenu";
 import {generateInterface, getPropValue} from "./api/helpers";
 
-// @ts-ignore
 window.distrust = new class Distrust
 {
     logger = Logger;
@@ -27,6 +26,7 @@ window.distrust = new class Distrust
     contextMenu = contextMenu;
 }
 
+// @ts-ignore
 Promise.allSettled([modules.waitForReady, common.waitForReady])
     .then(() =>
     {
@@ -46,7 +46,7 @@ Promise.allSettled([modules.waitForReady, common.waitForReady])
                     try
                     {
                       const plugin = await import(importUrl);
-
+                      coreLogger.info('importing plugin', plugin);
                       pluginsManager.plugins.push({ exports: plugin, manifest });
                     }
                     catch (e)
@@ -63,5 +63,6 @@ Promise.allSettled([modules.waitForReady, common.waitForReady])
 
         void generalSettings.get('customCss')
             .then((customCss) => css.injectCSS('customCss', customCss));
+        
     })
 
