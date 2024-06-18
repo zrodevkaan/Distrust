@@ -103,36 +103,36 @@ const startMainRecovery = (): void =>
 
 export const start = async (): Promise<void> =>
 {
-    const parser = webpack.getModule(webpack.filters.byDefaultProps('parse'))?.default;
+    const parser = webpack.getModule(x=>x.exports?.Z?.parse).Z
 
     injectCSS(
         'recovery',
         `[class*=errorPage] [class*=buttons_] {
-        flex-direction: column;
-        align-items: center;
+            flex-direction: column;
+            align-items: center;
         }
         [class*=errorPage] [class*=buttons_] [class*=button__] {
-        width: 400px;
-        margin: 5px;
+            width: 400px;
+            margin: 5px;
         }
         .distrust-recovery-button {
-        width: var(--custom-button-button-lg-width);
-        height: var(--custom-button-button-lg-height);
-        min-width: var(--custom-button-button-lg-width);
-        min-height: var(--custom-button-button-lg-height);
-        background-color: var(--button-danger-background) !important;
+            width: var(--custom-button-button-lg-width);
+            height: var(--custom-button-button-lg-height);
+            min-width: var(--custom-button-button-lg-width);
+            min-height: var(--custom-button-button-lg-height);
+            background-color: var(--button-danger-background) !important;
         }
         [class*=errorPage] [class*=scrollbarGhostHairline] {
-        white-space: break-spaces;
-        width: 80vw;
-        text-align: center;
+            white-space: break-spaces;
+            width: 80vw;
+            text-align: center;
         }`
     );
 
     const ErrorScreen = await waitForModule(
-        (x: any) => x?.exports?.default?.toString()?.includes('.AnalyticEvents.APP_CRASHED'),
+        (x) => x?.exports?.Z?.toString()?.includes('.APP_CRASHED'),
     )
-        .then((module: any) => module?.default);
+        .then((module: any) => module?.Z);
 
     void startErrors();
 
