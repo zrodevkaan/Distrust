@@ -1,8 +1,6 @@
 ﻿import * as electron from "electron";
 import {BrowserWindow} from "electron";
 import {join} from "path";
-import {readFileSync, writeFileSync} from "fs";
-import {constants} from "node:fs";
 
 const { env } = process;
 

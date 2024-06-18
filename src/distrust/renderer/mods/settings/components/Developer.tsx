@@ -6,8 +6,6 @@ import {coreLogger, generalSettings} from "../../../../devConsts";
 import { SetStateAction } from "react";
 
 const {react: React, components: {Switch}} = modules
-const Modals = getKeys('Anchor');
-const {Header} = getKeys('Header');
 
 export const DeveloperMenu = () => {
     const [customCss, setCustomCss] = React.useState('');
