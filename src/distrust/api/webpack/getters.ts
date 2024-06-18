@@ -1,5 +1,6 @@
 import { type WebpackModule, listeners, sources, ready as wpReady, wpRequire } from './modules';
 import { type Stores } from 'discord-types';
+import {FluxStore} from "discord-types/stores";
 
 interface GetModuleOptions {
     all?: boolean;
@@ -66,9 +67,6 @@ export const filters = {
         }
         return false;
     },
-
-    byStoreName: (name: string) => (module: WebpackModule): boolean =>
-        module?.exports?.default?.getName?.() === name,
 };
 
 export const getModule = <T = any>(filter: (module: WebpackModule) => boolean, options?: GetModuleOptions): T | undefined | null => {
@@ -84,9 +82,8 @@ export const getModule = <T = any>(filter: (module: WebpackModule) => boolean, o
     return options?.raw ? module : module?.exports;
 };
 
-export const getStore = <T = any>(name: string) => {
-    const store = getModule<T>(filters.byStoreName(name));
-    return store ? (store as any)?.default : store;
+export const getStore = (name: string) => {
+    return getModule(x=> x.exports?.ZP?.Store).ZP?.Store.getAll().find((x: FluxStore)=>x.getName() === name)
 };
 
 /** @deprecated use getModule in combination with filters.byProps */
